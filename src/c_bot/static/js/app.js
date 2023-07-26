@@ -6,6 +6,8 @@ $(document).ready(function () {
   let Lock = false
   // Current bot message id
   let CurrentBotMessageID = 0
+  // User name
+  let UserName = 'unknown'
 
   function GetNumberOfMessages () {
     // Returns the number of messages in the chat
@@ -111,6 +113,11 @@ $(document).ready(function () {
   const socket = io.connect()
   /* eslint-enable no-undef */
 
+  socket.on('username', function (msg) {
+    console.log('Received username :: ' + msg.username)
+    UserName = msg.username
+  })
+
   socket.on('speech', function (msg) {
     console.log(
       "Received speech command :: text: '" +
@@ -141,10 +148,10 @@ $(document).ready(function () {
   })
 
   socket.on('message', function (msg) {
-    console.log('Received message :: ' + msg.start + ' ' + msg.end + ' ' + msg.content)
+    console.log('Received message :: ' + msg.start + ' ' + msg.end + ' ' + msg.content + ' ' + msg.bot_name)
 
     // Add bot message
-    const BotName = 'C-Bot'
+    const BotName = msg.bot_name
 
     if (msg.start === true) {
       console.log('start bot message')
@@ -167,7 +174,7 @@ $(document).ready(function () {
     }
   })
 
-  function GetInteractiveAgentResponse (UserName = 'Vincent') {
+  function GetInteractiveAgentResponse () {
     const UserText = $('#user_input_text').val()
     let UserDatetime = 'HH:mm, Date (today, yesterday, date)'
     // Set Lock to prevent multiple messages from being sent at the same time

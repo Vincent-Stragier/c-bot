@@ -1,6 +1,6 @@
 eventlet==0.33.3
 Flask==2.2.5
 Flask_SocketIO==5.3.1
-pyttsx3==2.90
-websockets==10.2
-yaml
+pyttsx4==3.0.15
+PyYAML==6.0.1
+setuptools==65.5.0

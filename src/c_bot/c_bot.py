@@ -12,7 +12,8 @@ import tempfile
 from contextlib import contextmanager
 from multiprocessing import Lock
 
-import pyttsx3
+import pkg_resources
+import pyttsx4
 import yaml
 from eventlet import monkey_patch
 from flask import Flask, render_template, request, send_file
@@ -21,12 +22,13 @@ from flask_socketio import SocketIO
 monkey_patch()
 
 # Import text to speech engine
-engine_tts = pyttsx3.init()
+engine_tts = pyttsx4.init()
 
 LOCALE_LOCK = Lock()
-CONFIG_FILE = os.path.join(os.path.dirname(
-    __file__), 'config', 'configuration.yaml')
-PROMPT_FILE = os.path.join(os.path.dirname(__file__), 'config', 'prompt.txt')
+
+CONFIG_FILE = pkg_resources.resource_string(
+    __name__, 'config/configuration.yaml')
+PROMPT_FILE = pkg_resources.resource_string(__name__, 'config/prompt.txt')
 
 
 @contextmanager
@@ -40,16 +42,11 @@ def setlocale(name):
         None: None
     """
     with LOCALE_LOCK:
-        saved = locale.setlocale(locale.LC_ALL)
+        fallback = locale.setlocale(locale.LC_ALL)
         try:
             yield locale.setlocale(locale.LC_ALL, name)
         finally:
-            locale.setlocale(locale.LC_ALL, saved)
-
-
-# Let's set a non-US locale
-# locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
-locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+            locale.setlocale(locale.LC_ALL, fallback)
 
 
 def save_client_request(user_request: dict) -> bool:
@@ -127,12 +124,14 @@ def main() -> None:
     app.config['SECRET_KEY'] = os.urandom(24)
 
     # Load the configuration file
-    with open(CONFIG_FILE, 'r', encoding='utf-8') as config_file:
-        app.config['config'] = yaml.load(config_file, Loader=yaml.FullLoader)
+    app.config['config'] = yaml.load(CONFIG_FILE, Loader=yaml.FullLoader)
+
+    # Let's set a non-US locale
+    # setlocale('fr_FR.UTF-8')
+    setlocale(app.config['config']['interface']['locale'])
 
     # Load the prompt file
-    with open(PROMPT_FILE, 'r', encoding='utf-8') as prompt_file:
-        app.config['config']['prompt'] = prompt_file.read()
+    app.config['prompt'] = PROMPT_FILE.decode('utf-8')
 
     # Create a socketio instance
     socket_io = SocketIO(app, cors_allowed_origins='*', threaded=True)
@@ -152,88 +151,37 @@ def main() -> None:
         Args:
             message (str): the message
         """
-        # print(f'{message = }')
-        # Do a simple echo
-        # predicted_intents = chatbot.predict_class(message)
-        # intent = predicted_intents[0]["intent"]
-        # response = generate_answer(message, intent, ner(message))
-        # response = generate_answer(message)
-        # # Play the response on a specific websocket session
-        # socket_io.emit('speech', {'text': response,
-        #                           'voice': 0, 'rate': 200, 'volume': 100}, room=request.sid)
-        # # Send the response to the websocket
-        # socket_io.emit('message', f'{response}', room=request.sid)
+        voice_config = app.config['config']['voice']
+        js_app_config = app.config['config']['js_app']
 
-        # Send message word by word
         socket_io.emit(
-            'message', {'content': message, 'end': False, 'start': True}, room=request.sid)
-        print(f'{message = }')
+            'message', {'content': message, 'end': True, 'start': True,
+                        'bot_name': js_app_config.get('bot_name', 'C-Bot')
+                        }, room=request.sid)
 
-        # # Play the response on a specific websocket session
+        # Play the response on a specific websocket session
         socket_io.emit('speech', {'text': message,
-                                  'voice': 0, 'rate': 200, 'volume': 100}, room=request.sid)
+                                  'voice': voice_config.get('id', 0),
+                                  'rate': voice_config.get('rate', 200),
+                                  'volume': voice_config.get('volume', 1)
+                                  }, room=request.sid)
 
-        # process_queue_dict_lock.acquire()
-        # Send message to process queue
-
-        # if request.sid in process_queue_dict:
-        #     asyncio.run(process_queue_dict[request.sid][1].put(message))
-        # else:
-        #     # Error
-        #     print(f'Error: {request.sid} not in process_queue_dict')
-
-        # process_queue_dict_lock.release()
-
-        # response = generate_answer(message)
-        # ws.send(json.dumps({
-        #     "type": "generate",
-        #     "inputs": message,
-        #     "max_new_tokens": 1,
-        #     # extraStopSequences: ["\n\nHuman"],
-        #     "stop_sequence": "\n\n",
-        #     "do_sample": 1,
-        #     "top_k": 40,
-        #     "temperature": 0.9,} ))
-
-        # words = response.split()
-        # for word in words:
-        #     socket_io.emit('message', {
-        #                    'content': f'{word} ', 'end': False, 'start': False}, room=request.sid)
-        #     sleep(0.2)
-
-        socket_io.emit(
-            'message', {'content': '', 'end': True, 'start': False}, room=request.sid)
-
-    # handle session events
+        # socket_io.emit(
+        #     'message', {'content': '', 'end': True, 'start': False,
+        #                 'bot_name': js_app_config.get('bot_name', 'C-Bot')
+        #                 }, room=request.sid)
 
     @ socket_io.on('connect')
     def handle_connect():
         """Handle a connection to the websocket."""
+        username = app.config['config']['js_app'].get('username', 'Anonymous')
+        socket_io.emit('username', {'username': username}, room=request.sid)
         print(f'Client connected {request.sid = }')
-        # Start the websocket process
-        # websocket_process(socket_io, address)
-        # process_queue_dict_lock.acquire()
-
-        # message_queue = AsyncQueue(Queue())
-        # websocket_process = Process(
-        #     target=_WebsocketClientProcess().start, args=(address, request.sid, message_queue))
-        # websocket_process.start()
-
-        # process_queue_dict[request.sid] = (websocket_process, message_queue)
-        # process_queue_dict_lock.release()
 
     @ socket_io.on('disconnect')
     def handle_disconnect():
         """Handle a disconnection from the websocket."""
         print(f'Client disconnected {request.sid = }')
-        # process_queue_dict_lock.acquire()
-
-        # websocket_process, _ = process_queue_dict[request.sid]
-        # websocket_process.terminate()
-        # websocket_process.join()
-
-        # del process_queue_dict[request.sid]
-        # process_queue_dict_lock.release()
 
     @ app.route('/a')
     def generate_audio():
