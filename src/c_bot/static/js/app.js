@@ -141,22 +141,28 @@ $(document).ready(function () {
   })
 
   socket.on('message', function (msg) {
-    // Add interactive agent message
+    console.log('Received message :: ' + msg.start + ' ' + msg.end + ' ' + msg.content)
+
+    // Add bot message
     const BotName = 'C-Bot'
 
     if (msg.start === true) {
+      console.log('start bot message')
       AddMessage(
-        '',
-        'you',
+        msg.content,
+        'you', // This is a bot message
         'status green',
         BotName,
         CurrentDatetimeString()
       )
+
       // Update current bot message id (-1, since the message id starts at 0)
       CurrentBotMessageID = GetNumberOfMessages() - 1
-    } else if (msg.end === false && msg.start === false) {
+    } else {
       UpdateMessage(msg.content, 'message_' + CurrentBotMessageID)
-    } else if (msg.end === true) {
+    }
+
+    if (msg.end === true) {
       Lock = false
     }
   })

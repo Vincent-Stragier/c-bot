@@ -4,34 +4,25 @@
     Copyright (C) 2023 Vincent STRAGIER (vincent.stragier@outlook.com)
 """
 from __future__ import annotations
-import pyttsx3
-from contextlib import contextmanager
-from typing import Generic, TypeVar
-from queue import Empty, Full
-from multiprocessing import Process, Queue, Lock
-# from time import sleep
-import tempfile
-import os
-import logging
-import locale
-import json
-import io
+
 import asyncio
+import io
+import json
+import locale
+import logging
+import os
+import tempfile
+from contextlib import contextmanager
+from multiprocessing import Lock, Process, Queue
+from queue import Empty, Full
+from typing import Generic, TypeVar
+
+import pyttsx3
 from eventlet import monkey_patch
+from flask import Flask, render_template, request, send_file
+from flask_socketio import SocketIO
+
 monkey_patch()
-# from __future__ import print_function
-# from functools import partial
-# import argparse
-# import requests
-# import socket
-# import threading
-# import traceback
-# import pkg_resources
-# import sys
-
-# from datetime import datetime
-
-# from .ner import ner
 
 # Import text to speech engine
 engine_tts = pyttsx3.init()
@@ -41,6 +32,14 @@ LOCALE_LOCK = Lock()
 
 @contextmanager
 def setlocale(name):
+    """Set the locale.
+
+    Args:
+        name (str): the name of the locale
+
+    Returns:
+        None: None
+    """
     with LOCALE_LOCK:
         saved = locale.setlocale(locale.LC_ALL)
         try:
@@ -57,121 +56,100 @@ locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 T = TypeVar('T')
 
 
-# class AsyncQueue(Generic[T]):
-#     """Async wrapper for queue.Queue.
+class AsyncQueue(Generic[T]):
+    """Async wrapper for queue.Queue.
 
-#     Args:
-#         queue (Queue): the queue to wrap
+    Args:
+        queue (Queue): the queue to wrap
 
-#     Attributes:
+    Attributes:
 
-#     SLEEP (float): the time to sleep when the queue is full or empty
+    SLEEP (float): the time to sleep when the queue is full or empty
 
-#     Methods:
-#         get: get an item from the queue
+    Methods:
+        get: get an item from the queue
 
-#         put: put an item into the queue
+        put: put an item into the queue
 
-#         task_done: mark the item as done
-#     """
+        task_done: mark the item as done
+    """
 
-#     SLEEP: float = 0.01
+    SLEEP: float = 0.01
 
-#     def __init__(self, queue: Queue[T]):
-#         self._Q: Queue[T] = queue
+    def __init__(self, queue: "Queue[T]"):
+        self._q: "Queue[T]" = queue
 
-#     async def get(self) -> T:
-#         """Get an item from the queue.
+    async def get(self) -> T:
+        """Get an item from the queue.
 
-#         Returns:
-#             T: the item from the queue
+        Returns:
+            T: the item from the queue
 
-#         Raises:
-#             Empty: if the queue is empty
-#         """
-#         while True:
-#             try:
-#                 return self._Q.get_nowait()
-#             except Empty:
-#                 await asyncio.sleep(self.SLEEP)
+        Raises:
+            Empty: if the queue is empty
+        """
+        while True:
+            try:
+                return self._q.get_nowait()
+            except Empty:
+                await asyncio.sleep(self.SLEEP)
 
-#     async def put(self, item: T) -> None:
-#         """Put an item into the queue.
+    async def put(self, item: T) -> None:
+        """Put an item into the queue.
 
-#         Args:
-#             item (T): the item to put into the queue
+        Args:
+            item (T): the item to put into the queue
 
-#         Returns:
-#             None: None
+        Returns:
+            None: None
 
-#         Raises:
-#             Full: if the queue is full
-#         """
-#         while True:
-#             try:
-#                 self._Q.put_nowait(item)
-#                 return None
-#             except Full:
-#                 await asyncio.sleep(self.SLEEP)
+        Raises:
+            Full: if the queue is full
+        """
+        while True:
+            try:
+                self._q.put_nowait(item)
+                return None
+            except Full:
+                await asyncio.sleep(self.SLEEP)
 
-#     def task_done(self) -> None:
-#         """Mark the item as done.
+    def task_done(self) -> None:
+        """Mark the item as done.
 
-#         Returns:
-#             None: None
-#         """
-#         self._Q.task_done()
-#         return None
-
-# class ManageVerbose:
-#     """Allows to mask print() to the user."""
-
-#     def __init__(self, verbose=True):
-#         self.verbosity = verbose
-
-#     def __enter__(self):
-#         if not self.verbosity:
-#             self._original_stdout = sys.stdout
-#             sys.stdout = open(os.devnull, 'w')
-
-#     def __exit__(self, exc_type, exc_val, exc_tb):
-#         if not self.verbosity:
-#             sys.stdout.close()
-#             sys.stdout = self._original_stdout
+        Returns:
+            None: None
+        """
+        self._q.task_done()
+        return None
 
 
-def save_client_request(request: dict) -> bool:
+def save_client_request(user_request: dict) -> bool:
+    """Save the user request in an historic (SQL database).
+
+    Args:
+        user_request (dict): the user request
+
+    Returns:
+        bool: True if the request has been saved, False otherwise
+    """
     # Save request in an historic (SQL database)
-
+    print(f'{user_request = }')
     return False
 
 
-def generate_answer(request: str, intent: str | None = None, ner: list | None = None) -> str:
-    return "Le moteur de dialogue n'est pas encore implémenté."
-    # match intent:
-    #     case 'time':
-    #         return 'Il est ' + datetime.today().strftime('%H heures %M minutes et %S secondes')
-    #     case 'date':
-    #         return 'Nous sommes le ' + datetime.today().strftime('%A %d %B %Y')
-    #     case _:
-    #         return f'"Réponse inconnue" ({intent = }, {ner = })'
-
-
-def play(text: str, voice: int, rate: float, volume: float):
-    """Play a text with the TTS engine.
+def generate_answer(user_request: str, intent: str | None = None, ner: list | None = None) -> str:
+    """Generate an answer from a user request.
 
     Args:
-        text (str): the text to convert to speech and play
-        voice (int): the voice to use
-        rate (float): the rate of the speech (default is 200 words per minute)
-        volume (float): the volume of the speech (default is 1.0)
+        user_request (str): the user request
+        intent (str): the intent of the user request
+        ner (list): the named entities of the user request
+
+    Returns:
+        str: the answer
     """
-    voice = engine_tts.getProperty('voices')[voice]
-    engine_tts.setProperty('voice', voice.id)
-    engine_tts.setProperty('rate', rate)  # default is 200
-    engine_tts.setProperty('volume', volume)
-    engine_tts.say(text)
-    engine_tts.runAndWait()
+    print(f'{user_request = } {intent = } {ner = }')
+    return "Le moteur de dialogue n'est pas encore implémenté."
 
 
 def generate_sound_file(text: str, voice: int, rate: float, volume: float) -> io.BytesIO:
@@ -188,17 +166,24 @@ def generate_sound_file(text: str, voice: int, rate: float, volume: float) -> io
     """
     temp_file = io.BytesIO()
     with tempfile.TemporaryDirectory() as temp_dir:
+
         voice = engine_tts.getProperty('voices')[voice]
         engine_tts.setProperty('voice', voice.id)
-        engine_tts.setProperty('rate', rate)  # default is 200
+        # Default is 200 words per minute
+        engine_tts.setProperty('rate', rate)
         engine_tts.setProperty('volume', volume)
         file_name = 'sound.mp3'
         file_name = os.path.join(temp_dir, file_name)
         engine_tts.save_to_file(text, file_name)
         engine_tts.runAndWait()
+
         while not os.listdir(temp_dir):
+            # Wait for the file to be created
             pass
-        temp_file = io.BytesIO(open(file_name, 'rb').read())
+
+        with open(file_name, 'rb') as audio_file:
+            temp_file = io.BytesIO(audio_file.read())
+
     return temp_file
 
 
@@ -214,17 +199,15 @@ class _WebsocketClientProcess():
 
     """
 
-    def __init__(self) -> None:
-        """Initialize the websocket client process.
+    # def __init__(self) -> None:
+    #     """Initialize the websocket client process.
 
-        Args:
-            None
+    #     Args:
+    #         None
 
-        Returns:
-            None: None
-        """
-        # super().__init__()
-        pass
+    #     Returns:
+    #         None: None
+    #     """
 
     async def run(self, address: str, request_sid: str, sending_queue: Queue) -> None:
         """A websocket process.
@@ -240,10 +223,9 @@ class _WebsocketClientProcess():
             level=logging.WARN,
         )
 
-        from flask_socketio import SocketIO
+        # from flask_socketio import SocketIO
 
         # socket_io = SocketIO(message_queue='amqp://')
-
         # Create a websocket connection
         async with connect(address, logger=logging.getLogger('websocket.client')) as websocket:
             print(f'connected to websocket server: {address = }')
@@ -331,7 +313,8 @@ class _WebsocketClientProcess():
             None: None
         """
         print(
-            f'starting websocket client process... {address = } {request_sid = } {sending_queue = }')
+            'starting websocket client process...'
+            f' {address = } {request_sid = } {sending_queue = }')
         try:
             asyncio.run(self.run(address, request_sid, sending_queue))
         except KeyboardInterrupt:
@@ -339,9 +322,11 @@ class _WebsocketClientProcess():
 
 
 def main() -> None:
-    from flask import Flask, render_template, request, send_file
-    from flask_socketio import SocketIO
+    """Run the application.
 
+    Returns:
+        None: None
+    """
     app = Flask(__name__, )
     # generate a secret key for the session
     app.config['SECRET_KEY'] = os.urandom(24)
@@ -392,19 +377,23 @@ def main() -> None:
 
         # Send message word by word
         socket_io.emit(
-            'message', {'content': '', 'end': False, 'start': True}, room=request.sid)
+            'message', {'content': message, 'end': False, 'start': True}, room=request.sid)
         print(f'{message = }')
 
-        process_queue_dict_lock.acquire()
+        # # Play the response on a specific websocket session
+        socket_io.emit('speech', {'text': message,
+                                  'voice': 0, 'rate': 200, 'volume': 100}, room=request.sid)
+
+        # process_queue_dict_lock.acquire()
         # Send message to process queue
 
-        if request.sid in process_queue_dict:
-            asyncio.run(process_queue_dict[request.sid][1].put(message))
-        else:
-            # Error
-            print(f'Error: {request.sid} not in process_queue_dict')
+        # if request.sid in process_queue_dict:
+        #     asyncio.run(process_queue_dict[request.sid][1].put(message))
+        # else:
+        #     # Error
+        #     print(f'Error: {request.sid} not in process_queue_dict')
 
-        process_queue_dict_lock.release()
+        # process_queue_dict_lock.release()
 
         # response = generate_answer(message)
         # ws.send(json.dumps({
@@ -424,11 +413,7 @@ def main() -> None:
         #     sleep(0.2)
 
         socket_io.emit(
-            'message', {'content': 'circa line 356', 'end': True, 'start': False}, room=request.sid)
-
-        # # Play the response on a specific websocket session
-        # socket_io.emit('speech', {'text': response,
-        #                           'voice': 0, 'rate': 200, 'volume': 100}, room=request.sid)
+            'message', {'content': '', 'end': True, 'start': False}, room=request.sid)
 
     # handle session events
 
@@ -438,28 +423,28 @@ def main() -> None:
         print(f'Client connected {request.sid = }')
         # Start the websocket process
         # websocket_process(socket_io, address)
-        process_queue_dict_lock.acquire()
+        # process_queue_dict_lock.acquire()
 
-        message_queue = AsyncQueue(Queue())
-        websocket_process = Process(
-            target=_WebsocketClientProcess().start, args=(address, request.sid, message_queue))
-        websocket_process.start()
+        # message_queue = AsyncQueue(Queue())
+        # websocket_process = Process(
+        #     target=_WebsocketClientProcess().start, args=(address, request.sid, message_queue))
+        # websocket_process.start()
 
-        process_queue_dict[request.sid] = (websocket_process, message_queue)
-        process_queue_dict_lock.release()
+        # process_queue_dict[request.sid] = (websocket_process, message_queue)
+        # process_queue_dict_lock.release()
 
     @ socket_io.on('disconnect')
     def handle_disconnect():
         """Handle a disconnection from the websocket."""
         print(f'Client disconnected {request.sid = }')
-        process_queue_dict_lock.acquire()
+        # process_queue_dict_lock.acquire()
 
-        websocket_process, message_queue = process_queue_dict[request.sid]
-        websocket_process.terminate()
-        websocket_process.join()
+        # websocket_process, _ = process_queue_dict[request.sid]
+        # websocket_process.terminate()
+        # websocket_process.join()
 
-        del process_queue_dict[request.sid]
-        process_queue_dict_lock.release()
+        # del process_queue_dict[request.sid]
+        # process_queue_dict_lock.release()
 
     @ app.route('/a')
     def generate_audio():
@@ -472,7 +457,7 @@ def main() -> None:
         voice = int(request.args.get('voice', '0'))
         rate = float(request.args.get('rate', '200'))
         volume = float(request.args.get('volume', '1'))
-        # print(f'{text = }, {voice = }, {rate = }, {volume = }')
+
         return send_file(generate_sound_file(
             text=text, voice=voice, rate=rate, volume=volume),
             download_name='sound.mp3')
