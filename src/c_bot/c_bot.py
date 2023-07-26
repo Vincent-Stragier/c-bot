@@ -5,19 +5,15 @@
 """
 from __future__ import annotations
 
-import asyncio
 import io
-import json
 import locale
-import logging
 import os
 import tempfile
 from contextlib import contextmanager
-from multiprocessing import Lock, Process, Queue
-from queue import Empty, Full
-from typing import Generic, TypeVar
+from multiprocessing import Lock
 
 import pyttsx3
+import yaml
 from eventlet import monkey_patch
 from flask import Flask, render_template, request, send_file
 from flask_socketio import SocketIO
@@ -28,6 +24,9 @@ monkey_patch()
 engine_tts = pyttsx3.init()
 
 LOCALE_LOCK = Lock()
+CONFIG_FILE = os.path.join(os.path.dirname(
+    __file__), 'config', 'configuration.yaml')
+PROMPT_FILE = os.path.join(os.path.dirname(__file__), 'config', 'prompt.txt')
 
 
 @contextmanager
@@ -51,76 +50,6 @@ def setlocale(name):
 # Let's set a non-US locale
 # locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
-
-# From https://stackoverflow.com/a/75210864/10949679
-T = TypeVar('T')
-
-
-class AsyncQueue(Generic[T]):
-    """Async wrapper for queue.Queue.
-
-    Args:
-        queue (Queue): the queue to wrap
-
-    Attributes:
-
-    SLEEP (float): the time to sleep when the queue is full or empty
-
-    Methods:
-        get: get an item from the queue
-
-        put: put an item into the queue
-
-        task_done: mark the item as done
-    """
-
-    SLEEP: float = 0.01
-
-    def __init__(self, queue: "Queue[T]"):
-        self._q: "Queue[T]" = queue
-
-    async def get(self) -> T:
-        """Get an item from the queue.
-
-        Returns:
-            T: the item from the queue
-
-        Raises:
-            Empty: if the queue is empty
-        """
-        while True:
-            try:
-                return self._q.get_nowait()
-            except Empty:
-                await asyncio.sleep(self.SLEEP)
-
-    async def put(self, item: T) -> None:
-        """Put an item into the queue.
-
-        Args:
-            item (T): the item to put into the queue
-
-        Returns:
-            None: None
-
-        Raises:
-            Full: if the queue is full
-        """
-        while True:
-            try:
-                self._q.put_nowait(item)
-                return None
-            except Full:
-                await asyncio.sleep(self.SLEEP)
-
-    def task_done(self) -> None:
-        """Mark the item as done.
-
-        Returns:
-            None: None
-        """
-        self._q.task_done()
-        return None
 
 
 def save_client_request(user_request: dict) -> bool:
@@ -187,140 +116,6 @@ def generate_sound_file(text: str, voice: int, rate: float, volume: float) -> io
     return temp_file
 
 
-class _WebsocketClientProcess():
-    """A websocket client process.
-
-    Attributes:
-        _sending_queue (AsyncQueue): the sending queue
-
-    Methods:
-        run: run the process
-        start: start the process
-
-    """
-
-    # def __init__(self) -> None:
-    #     """Initialize the websocket client process.
-
-    #     Args:
-    #         None
-
-    #     Returns:
-    #         None: None
-    #     """
-
-    async def run(self, address: str, request_sid: str, sending_queue: Queue) -> None:
-        """A websocket process.
-
-        Args:
-            socket_io (Flask-SocketIO): the socket-io instance
-            address (str): the address of the websocket server
-        """
-        from websockets import connect
-
-        logging.basicConfig(
-            format="%(asctime)s %(message)s",
-            level=logging.WARN,
-        )
-
-        # from flask_socketio import SocketIO
-
-        # socket_io = SocketIO(message_queue='amqp://')
-        # Create a websocket connection
-        async with connect(address, logger=logging.getLogger('websocket.client')) as websocket:
-            print(f'connected to websocket server: {address = }')
-            # Initiate the connection
-            await websocket.send(json.dumps({"type": "open_inference_session", "max_length": 1024}))
-
-            # Send a test message
-            # await websocket.send(json.dumps({
-            #     "type": "generate",
-            #     "inputs": f"La langue est source de beauté.\"",
-            #     "max_new_tokens": 1,
-            #     "extraStopSequences": ["\n\nHuman", "\n\nhuman"],
-            #     "stop_sequence": "\n\n",
-            #     "do_sample": 1,
-            #     "top_k": 40,
-            #     "temperature": 0.9
-            # }))
-
-            async def _receive_messages(websocket, socket_io, request_sid):
-                """Receive messages from the websocket server.
-
-                Args:
-                    websocket (websockets.client.WebSocketClientProtocol): the websocket connection
-                    socket_io (Flask-SocketIO): the socket-io instance (used to emit messages)
-                    request_sid (str): the request sid
-                """
-                async for message in websocket:
-                    message = json.loads(message)
-                    if message['ok'] is False:
-                        print(f'error: {message}')
-                    else:
-                        print(f'{message.get("outputs", "")}', end='')
-
-                    # NOTE: not used for now
-                    # socket_io.emit('message', json.dumps({
-                    #     'message': message.get("outputs", ""),
-
-                    # }), room=request_sid)
-
-                    socket_io.emit(
-                        'message', {
-                            'content': message.get('outputs', ''),
-                            'end': False,
-                            'start': True
-                        }, room=request_sid)
-                    await asyncio.sleep(0)
-
-            # Create a task to send messages to the websocket server
-            async def _send_messages(websocket):
-                """Send messages to the websocket server.
-
-                Args:
-                    websocket (websockets.client.WebSocketClientProtocol): the websocket connection
-                """
-                while True:
-                    message = await sending_queue.get()
-                    message = json.dumps({
-                        "type": "generate",
-                        "inputs": f"{message}\"",
-                        "max_new_tokens": 1,
-                        "extraStopSequences": ["\n\nHuman", "\n\nhuman"],
-                        "stop_sequence": "\n\n",
-                        "do_sample": 1,
-                        "top_k": 40,
-                        "temperature": 0.9})
-                    print(f'got message to send! {message = } (send)')
-                    await websocket.send(message)
-                    await asyncio.sleep(0)
-
-            # Start the task concurrently
-            await asyncio.gather(
-                _receive_messages(websocket, socket_io, request_sid),
-                _send_messages(websocket),
-            )
-
-    def start(self, address: str, request_sid: str, sending_queue) -> None:
-        """Start the websocket client process.
-
-        Args:
-            address (str): the address of the websocket server
-            request_sid (str): the request sid
-            sending_queue (Queue): the sending queue
-
-        Returns:
-            None: None
-        """
-        print(
-            'starting websocket client process...'
-            f' {address = } {request_sid = } {sending_queue = }')
-        try:
-            asyncio.run(self.run(address, request_sid, sending_queue))
-        except KeyboardInterrupt:
-            print('User stopped websocket client process')
-
-
 def main() -> None:
     """Run the application.
 
@@ -330,31 +125,25 @@ def main() -> None:
     app = Flask(__name__, )
     # generate a secret key for the session
     app.config['SECRET_KEY'] = os.urandom(24)
+
+    # Load the configuration file
+    with open(CONFIG_FILE, 'r', encoding='utf-8') as config_file:
+        app.config['config'] = yaml.load(config_file, Loader=yaml.FullLoader)
+
+    # Load the prompt file
+    with open(PROMPT_FILE, 'r', encoding='utf-8') as prompt_file:
+        app.config['config']['prompt'] = prompt_file.read()
+
+    # Create a socketio instance
     socket_io = SocketIO(app, cors_allowed_origins='*', threaded=True)
-
-    # Open a websocket to communicate with the chatbot
-    address = 'ws://chat.petals.ml/api/v2/generate'
-
-    # Create a queue to keep a trace of the process and related id
-    process_queue_dict_lock = Lock()
-    process_queue_dict = {}
 
     # Define app routes
     @ app.route("/")
     def index() -> str:
-
         # Needs to implement a mechanism to restore the previous session
         # if the user is already connected
         return render_template(
-            "index.htm", title='C-Bot',
-            chat_title='Conversation avec l\'agent interactif',
-            chat_number_of_messages="0 message",
-            chat_send_button_value='Envoyer',
-            chat_input_placeholder='Saisissez votre message ici',
-            footer_text=('© 2023 - Agent interactif de Vincent Stragier,'
-                         ' Université de Mons et '
-                         'les Amis des Aveugles de Ghlin'),
-        )
+            "index.htm", **app.config['config']['html_index'])
 
     @ socket_io.on('message')
     def handle_message(message):

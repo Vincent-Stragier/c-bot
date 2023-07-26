@@ -1,0 +1,12 @@
+html_index:
+  title: "C-Bot"
+  chat_title: "Conversation avec l'agent interactif"
+  chat_number_of_messages: "0 message"
+  chat_send_button_value: "Envoyer"
+  chat_input_placeholder: "Saisissez votre message ici"
+  footer_text: "© 2023 - Agent interactif de Vincent Stragier, Université de Mons et les Amis des Aveugles de Ghlin"
+
+llm_api:
+  url: "localhost"
+  port: 7425
+  token: "jl5sd5f78244cf"

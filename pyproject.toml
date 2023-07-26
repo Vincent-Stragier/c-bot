@@ -7,5 +7,6 @@ requires = [
     "Flask_SocketIO==5.3.1",
     "pyttsx3==2.90",
     "websockets==10.2",
+    "yaml",
 ]
 build-backend = "setuptools.build_meta"
