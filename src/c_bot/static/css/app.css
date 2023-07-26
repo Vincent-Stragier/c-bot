@@ -11,7 +11,7 @@ body {
 #container {
 	width: 750px;
 	height: 600px;
-	background: #ffffff;
+	background: #fff;
 	margin: 0 auto;
 	font-size: 0;
 	border-radius: 5px;
@@ -58,7 +58,7 @@ main header {
 	padding: 30px 20px 30px 40px;
 }
 
-main header>* {
+main header > * {
 	display: inline-block;
 	vertical-align: top;
 }
@@ -118,7 +118,7 @@ main header h3 {
 	color: #bbb;
 }
 
-#chat .entete {
+#chat .header {
 	margin-bottom: 5px;
 }
 
