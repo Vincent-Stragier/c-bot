@@ -1,112 +1,115 @@
+/* eslint-env jquery */
 $(document).ready(function () {
   // Number of messages in the chat
-  let number_of_messages = 0
+  let NumberOfMessages = 0
   // Lock to prevent multiple messages from being sent at the same time
-  let lock = false
+  let Lock = false
   // Current bot message id
-  let current_bot_message_id = 0
+  let CurrentBotMessageID = 0
 
-  function get_number_of_messages () {
+  function GetNumberOfMessages () {
     // Returns the number of messages in the chat
-    return number_of_messages
+    return NumberOfMessages
   }
 
-  function current_datetime_string () {
+  function CurrentDatetimeString () {
     // Returns a string with the current date and time
-    const current = new Date()
+    const Current = new Date()
     return (
-      current.getFullYear() +
+      Current.getFullYear() +
       '-' +
-      (current.getMonth() + 1) +
+      (Current.getMonth() + 1) +
       '-' +
-      current.getDate() +
+      Current.getDate() +
       ' ' +
-      current.getHours() +
+      Current.getHours() +
       ':' +
-      current.getMinutes() +
+      Current.getMinutes() +
       ':' +
-      current.getSeconds()
+      Current.getSeconds()
     )
   }
 
-  function message_added_event (last_message_id, update_id = true) {
+  function MessageAddedEvent (LastMessageID, UpdateID = true) {
     // To be added in each function that adds a message...
-    if (update_id == true) {
-      number_of_messages += 1
+    if (UpdateID === true) {
+      NumberOfMessages += 1
     }
 
-    messages = number_of_messages.toString() + ' message'
-    if (number_of_messages > 1) {
-      messages += 's'
+    let Messages = NumberOfMessages.toString() + ' message'
+    if (NumberOfMessages > 1) {
+      Messages += 's'
     }
 
-    document.getElementById('number_of_messages').innerHTML = messages
+    document.getElementById('number_of_messages').innerHTML = Messages
     document
       .getElementById('user_input')
       .scrollIntoView({ block: 'start', behavior: 'smooth' })
 
     document
-      .getElementById(last_message_id)
+      .getElementById(LastMessageID)
       .scrollIntoView({ block: 'start', behavior: 'smooth' })
   }
 
-  function add_message (message, li_class, span_class, name, datetime) {
+  function AddMessage (Message, LiClass, SpanClass, Name, Datetime) {
     // Add user message
-    const message_id = 'message_' + get_number_of_messages()
+    const MessageID = 'message_' + GetNumberOfMessages()
 
-    let message_entete = ''
+    let MessageHeader = ''
 
-    // if (message == "") {
+    // if (message === "") {
     //   // Add a "typing" animation
     //   message = '<div class="typing"></div>';
     // }
 
-    if (li_class == 'me') {
-      message_entete =
+    if (LiClass === 'me') {
+      MessageHeader =
         '<h3>' +
-        datetime +
+        Datetime +
         '  ' +
         '</h3><h2>' +
-        name +
+        Name +
         '  </h2><span class="' +
-        span_class +
+        SpanClass +
         '"></span>'
-    } else if (li_class == 'you') {
-      message_entete =
+    } else if (LiClass === 'you') {
+      MessageHeader =
         '<span class="' +
-        span_class +
+        SpanClass +
         '"></span>' +
         '  <h2>' +
-        name +
+        Name +
         '</h2>' +
         '  <h3>' +
-        datetime +
+        Datetime +
         '</h3>'
     }
 
-    console.log(message_id)
+    console.log(MessageID)
     $('#chat').append(
       '<li class="' +
-      li_class +
+      LiClass +
       '"><div class="entete">' +
-      message_entete +
+      MessageHeader +
       '</div>' +
       // '<div class="triangle"></div>' +
       '<div class=message id="' +
-      message_id +
+      MessageID +
       '">' +
-      message +
+      Message +
       '</div></li>'
     )
-    message_added_event(message_id)
+    MessageAddedEvent(MessageID)
   }
 
-  function update_message (message, message_id) {
-    document.getElementById(message_id).innerHTML += message
-    message_added_event(message_id, false)
+  function UpdateMessage (Message, MessageID) {
+    document.getElementById(MessageID).innerHTML += Message
+    MessageAddedEvent(MessageID, false)
   }
 
+  /* eslint-disable no-undef */
   const socket = io.connect()
+  /* eslint-enable no-undef */
 
   socket.on('speech', function (msg) {
     console.log(
@@ -120,6 +123,7 @@ $(document).ready(function () {
       msg.volume
     )
 
+    /* eslint-disable no-undef */
     const audio = new Audio(
       '/a?text=' +
       msg.text +
@@ -130,64 +134,66 @@ $(document).ready(function () {
       '&volume=' +
       msg.volume
     )
+    /* eslint-enable no-undef */
+
     audio.loop = false
     audio.play()
   })
 
   socket.on('message', function (msg) {
     // Add interactive agent message
-    const bot_name = 'Agent interactif'
+    const BotName = 'C-Bot'
 
-    if (msg.start == true) {
-      add_message(
+    if (msg.start === true) {
+      AddMessage(
         '',
         'you',
         'status green',
-        bot_name,
-        current_datetime_string()
+        BotName,
+        CurrentDatetimeString()
       )
       // Update current bot message id (-1, since the message id starts at 0)
-      current_bot_message_id = get_number_of_messages() - 1
-    } else if (msg.end == false && msg.start == false) {
-      update_message(msg.content, 'message_' + current_bot_message_id)
-    } else if (msg.end == true) {
-      lock = false
+      CurrentBotMessageID = GetNumberOfMessages() - 1
+    } else if (msg.end === false && msg.start === false) {
+      UpdateMessage(msg.content, 'message_' + CurrentBotMessageID)
+    } else if (msg.end === true) {
+      Lock = false
     }
   })
 
-  function get_interactive_agent_response (user_name = 'Vincent') {
-    const user_text = $('#user_input_text').val()
-    let user_datetime = 'HH:mm, Date (today, yesterday, date)'
-    // Set lock to prevent multiple messages from being sent at the same time
-    lock = true
+  function GetInteractiveAgentResponse (UserName = 'Vincent') {
+    const UserText = $('#user_input_text').val()
+    let UserDatetime = 'HH:mm, Date (today, yesterday, date)'
+    // Set Lock to prevent multiple messages from being sent at the same time
+    Lock = true
 
     // Reset user input text area
     $('#user_input_text').val('')
 
     // If the user input text area is empty, do nothing
-    if (user_text == '' || user_text == '\n') {
-      lock = false
+    if (UserText === '' || UserText === '\n') {
+      Lock = false
       return
     }
 
     // Get current date and time
-    user_datetime = current_datetime_string()
+    UserDatetime = CurrentDatetimeString()
 
     // Add me (user) message
-    add_message(user_text, 'me', 'status blue', user_name, user_datetime)
+    AddMessage(UserText, 'me', 'status blue', UserName, UserDatetime)
 
     // Send user message via websocket
-    socket.emit('message', user_text)
+    socket.emit('message', UserText)
   }
 
   $('#user_input_text').keypress(function (key) {
     // If the enter key is pressed in the user input text area,
     // request a response from the interactive agent
-    if (key.which == 13 && lock == false) {
-      get_interactive_agent_response()
+    if (key.which === 13 && Lock === false) {
+      GetInteractiveAgentResponse()
     }
     // Remove \n from user input text area
-    if (key.which == 13) {
+    if (key.which === 13) {
       key.preventDefault()
     }
   })
@@ -195,10 +201,10 @@ $(document).ready(function () {
   $('#user_input_button').click(function () {
     // If the user clicks on the send button,
     // request a response from the interactive agent
-    if (lock == true) {
+    if (Lock === true) {
       return
     }
-    get_interactive_agent_response()
+    GetInteractiveAgentResponse()
   })
 
   $('#chat').change(function () {

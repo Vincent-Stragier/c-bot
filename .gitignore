@@ -130,3 +130,8 @@ dmypy.json
 
 # VSCode settings
 .vscode/
+
+# Ignore nodejs files
+src/c_bot/static/js/node_modules/
+src/c_bot/static/js/package-lock.json
+src/c_bot/static/js/package.json
