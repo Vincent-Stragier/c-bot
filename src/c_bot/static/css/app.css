@@ -11,7 +11,7 @@ body {
 #container {
 	width: 750px;
 	height: 600px;
-	background: #FFFFFF;
+	background: #ffffff;
 	margin: 0 auto;
 	font-size: 0;
 	border-radius: 5px;
@@ -61,6 +61,11 @@ main header {
 main header>* {
 	display: inline-block;
 	vertical-align: top;
+}
+
+main footer img {
+	height: 30px;
+	cursor: pointer;
 }
 
 main header img:first-child {
@@ -147,16 +152,16 @@ main header h3 {
 	width: 0;
 	height: 0;
 	border-style: solid;
-	border-width: 0 10px 10px 10px;
+	border-width: 0 10px 10px;
 }
 
 #chat .you .triangle {
-	border-color: transparent transparent #58b666 transparent;
+	border-color: transparent transparent #58b666;
 	margin-left: 15px;
 }
 
 #chat .me .triangle {
-	border-color: transparent transparent #6fbced transparent;
+	border-color: transparent transparent #6fbced;
 	margin-left: 375px;
 }
 
@@ -179,11 +184,6 @@ main footer textarea {
 
 main footer textarea::placeholder {
 	color: #ddd;
-}
-
-main footer img {
-	height: 30px;
-	cursor: pointer;
 }
 
 main footer a {
