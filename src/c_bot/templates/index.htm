@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>{{title}}</title>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="{{ url_for('static', filename='img/favicon.svg')}}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <!-- <link
+      rel="stylesheet"
+      href="{{url_for('static', filename = 'css/app.css')}}"
+    /> -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+      integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"
+      integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ=="
+      crossorigin="anonymous"
+    ></script>
+    <link
+      href="//mincss.com/entireframework.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="{{url_for('static', filename = 'css/app.css')}}"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <script
+      type="text/javascript"
+      src="{{ url_for('static', filename = 'js/app.js') }}"
+    ></script>
+    <!-- Add a header to the body with accessibility function (increase contrast, police size, etc.) -->
+    <!-- <header>
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <div class="accessibility">
+              <a href="#" class="accessibility__link">A</a>
+              <a href="#" class="accessibility__link">A</a>
+              <a href="#" class="accessibility__link">A</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">{{navbar_brand}}</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarCollapse"
+        aria-controls="navbarCollapse"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#"
+              >{{navbar_home}}<span class="sr-only">(current)</span></a
+            >
+          </li>
+          <li class="nav-item">
+            
+            <a class="nav-link" href=>{{navbar_about}}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">{{navbar_contact}}</a>
+          </li>
+        </ul>
+      </div>
+    </nav> -->
+    <!-- Add a main section -->
+    <!-- <main role="main">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <h1>{{main_title}}</h1>
+            <p>{{main_description}}</p>
+          </div>
+        </div>
+      </div>
+    </main> -->
+    <!-- Add a footer -->
+
+    <p style="margin-bottom: 2cm"></p>
+    <div id="container">
+      <!-- https://www.webtopic.com/html-css-chat-box-designs/ -->
+      <main>
+        <header>
+          <div>
+            <h2>{{chat_title}}</h2>
+            <h3 id="number_of_messages">{{chat_number_of_messages}}</h3>
+          </div>
+        </header>
+        <ol id="chat"></ol>
+        <footer>
+          <div id="user_input">
+            <textarea
+              id="user_input_text"
+              placeholder="{{chat_input_placeholder}}"
+              type="text"
+            ></textarea>
+            <input id="user_input_button" type="submit"
+            value="{{chat_send_button_value}}"" />
+          </div>
+        </footer>
+      </main>
+    </div>
+    <footer class="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <p>{{footer_text}}</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

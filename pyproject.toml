@@ -1,0 +1,11 @@
+[build-system]
+requires = [
+    "setuptools>=42",
+    "wheel",
+    "eventlet==0.33.3",
+    "Flask==2.2.5",
+    "Flask_SocketIO==5.3.1",
+    "pyttsx3==2.90",
+    "websockets==10.2",
+]
+build-backend = "setuptools.build_meta"
