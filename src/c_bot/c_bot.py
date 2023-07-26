@@ -70,7 +70,7 @@ class AsyncQueue(Generic[T]):
     Methods:
         get: get an item from the queue
 
-        put: put an item into the queue 
+        put: put an item into the queue
 
         task_done: mark the item as done
     """
@@ -273,7 +273,7 @@ class _WebsocketClientProcess():
                 """
                 async for message in websocket:
                     message = json.loads(message)
-                    if message['ok'] == False:
+                    if message['ok'] is False:
                         print(f'error: {message}')
                     else:
                         print(f'{message.get("outputs", "")}', end='')

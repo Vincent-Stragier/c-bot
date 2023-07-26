@@ -27,7 +27,8 @@ AUTHORIZED_COMMANDS = [
     'environment_question',
 ]
 
-def detect(object_to_detect:str|None=None)-> bool|list:
+
+def detect(object_to_detect: str | None = None) -> bool | list:
     """Detect the visible object using a model such as YOLOv8.
 
     Args:
@@ -49,7 +50,8 @@ def detect(object_to_detect:str|None=None)-> bool|list:
 
     raise ValueError('`object_to_detect` should be None, or a string.')
 
-def color(object_name: str|None=None) -> tuple:
+
+def color(object_name: str | None = None) -> tuple:
     """Pick the dominant color of the mentioned object or of the environment.
 
     Args:
@@ -62,7 +64,7 @@ def color(object_name: str|None=None) -> tuple:
 
     if object_name is None:
         # Compute the mean color of the input frame
-        return 0,0,255,
+        return 0, 0, 255,
 
     if isinstance(object_name, str):
         # Detect object and realize mean on the area of the bounding box
@@ -71,14 +73,16 @@ def color(object_name: str|None=None) -> tuple:
 
     raise ValueError('`object_to_detect` should be None, or a string.')
 
+
 def colors() -> tuple:
     """Pick the dominant color of the environment.
-    
+
     Returns:
         tuple: The color in RGB
     """
     logger.info('mocked colors')
     return 0, 255, 0,
+
 
 def navigation(destination: str) -> str:
     """Navigate to the given destination.
@@ -92,6 +96,7 @@ def navigation(destination: str) -> str:
     logger.info('mocked navigation')
     return f'You have reached your {destination}.'
 
+
 def position() -> tuple:
     """Get the current position of the user.
 
@@ -101,28 +106,31 @@ def position() -> tuple:
     logger.info('mocked position')
     return {'latitude': 25, 'longitude': 65, 'altitude': 9}
 
+
 def add() -> str:
     """Add a face to the face recognition database.
-    
+
     Returns:
         str: The status of the addition.
     """
     logger.info('mocked add')
     return 'Face successfully added.'
 
+
 def remove() -> str:
     """Remove a face from the face recognition database.
-    
+
     Returns:
         str: The status of the removal.
     """
     logger.info('mocked remove')
     return 'Face successfully removed.'
 
+
 def look_for(name: str) -> str:
     """Look for the given person in the face recognition database
     and return the status of the search.
-    
+
     Args:
         name (str): The name of the person to look for.
 
@@ -132,6 +140,7 @@ def look_for(name: str) -> str:
     logger.info('mocked look_for')
     return f'{name} found.'
 
+
 def enumerate_individuals() -> list:
     """Enumerate all the individuals in the environment.
 
@@ -140,6 +149,7 @@ def enumerate_individuals() -> list:
     """
     logger.info('mocked enumerate_individuals')
     return ['individual1', 'individual2', 'jhon doe', 'jane doe', 'mocked individual']
+
 
 def age_estimation(name: str) -> int:
     """Estimate the age of the given person.
@@ -153,6 +163,7 @@ def age_estimation(name: str) -> int:
     logger.info('mocked age_estimation of %s', name)
     return 25
 
+
 def emotion_estimation(name: str) -> str:
     """Estimate the emotion of the given person.
 
@@ -165,7 +176,8 @@ def emotion_estimation(name: str) -> str:
     logger.info('mocked emotion_estimation of %s', name)
     return 'neutral'
 
-def ocr(object_name: str|None=None) -> str:
+
+def ocr(object_name: str | None = None) -> str:
     """Read the text on the mentioned object or on the every object.
 
     Args:
@@ -186,6 +198,7 @@ def ocr(object_name: str|None=None) -> str:
 
     raise ValueError('`object_to_detect` should be None, or a string.')
 
+
 def money() -> int:
     """Count the money in the wallet.
 
@@ -195,6 +208,7 @@ def money() -> int:
     logger.info('mocked money')
     return {'total_amount': 25, 'currency': 'EUR', 'details': (5, 10, 10)}
 
+
 def environment() -> str:
     """Describe the environment.
 
@@ -203,6 +217,7 @@ def environment() -> str:
     """
     logger.info('mocked environment')
     return 'mocked environment description'
+
 
 def environment_question(question: str) -> str:
     """Answer the given question about the environment.
@@ -216,7 +231,8 @@ def environment_question(question: str) -> str:
     logger.info('mocked environment_question: %s', question)
     return 'mocked answer to the question'
 
-def interpreter(command: str, run: bool=False):
+
+def interpreter(command: str, run: bool = False):
     """Interpret the given command and run it if asked to.
 
     The interpreter is based on the following grammar:
@@ -240,7 +256,7 @@ def interpreter(command: str, run: bool=False):
     # Extract the parameters from the command
     def extract_parameters(parameters_string: str) -> list:
         """Extract the parameters from the parameters string.
-        
+
         Args:
             parameters_string (str): the parameters string.
 
@@ -263,7 +279,7 @@ def interpreter(command: str, run: bool=False):
 
             # Check if the character is in quotes and if it is not escaped.
             if (char in quotes
-                and parameters_string[index - 1] != escape):
+                    and parameters_string[index - 1] != escape):
                 inhibited = not inhibited
 
             if char == separator:
@@ -348,6 +364,7 @@ def interpreter(command: str, run: bool=False):
         return functor(*parameters)
 
     return functor, parameters
+
 
 if __name__ == '__main__':
     # interpreter('detect( "chair 25\\"", \'jf\', 25, 2.5, b"test,test",
