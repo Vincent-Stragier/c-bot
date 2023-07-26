@@ -39,7 +39,7 @@ jobs:
       # Checkout the code base #
       ##########################
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3.5.3
         with:
           # Full git history is needed to get a proper
           # list of changed files within `super-linter`
@@ -55,7 +55,7 @@ jobs:
           # VALIDATE_ALL_CODEBASE: false
           # ACTIONS_RUNNER_DEBUG: true
           # FILTER_REGEX_INCLUDE: .*src/.* .*test/.* .*old/.*, 
-#           FILTER_REGEX_EXCLUDE: (./reports/.*|./jobs_scripts/template.sh)
+          # FILTER_REGEX_EXCLUDE: (./reports/.*|./jobs_scripts/template.sh)
           VALIDATE_LATEX: false
           # VALIDATE_JSON: true
           # VALIDATE_PYTHON: true
