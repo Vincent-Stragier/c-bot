@@ -97,7 +97,7 @@ def navigation(destination: str) -> str:
     return f'You have reached your {destination}.'
 
 
-def position() -> tuple:
+def position() -> dict:
     """Get the current position of the user.
 
     Returns:
@@ -199,7 +199,7 @@ def ocr(object_name: str | None = None) -> str:
     raise ValueError('`object_to_detect` should be None, or a string.')
 
 
-def money() -> int:
+def money() -> dict:
     """Count the money in the wallet.
 
     Returns:

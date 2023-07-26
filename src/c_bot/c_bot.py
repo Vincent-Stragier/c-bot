@@ -57,71 +57,71 @@ locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 T = TypeVar('T')
 
 
-class AsyncQueue(Generic[T]):
-    """Async wrapper for queue.Queue.
+# class AsyncQueue(Generic[T]):
+#     """Async wrapper for queue.Queue.
 
-    Args:
-        queue (Queue): the queue to wrap
+#     Args:
+#         queue (Queue): the queue to wrap
 
-    Attributes:
+#     Attributes:
 
-    SLEEP (float): the time to sleep when the queue is full or empty
+#     SLEEP (float): the time to sleep when the queue is full or empty
 
-    Methods:
-        get: get an item from the queue
+#     Methods:
+#         get: get an item from the queue
 
-        put: put an item into the queue
+#         put: put an item into the queue
 
-        task_done: mark the item as done
-    """
+#         task_done: mark the item as done
+#     """
 
-    SLEEP: float = 0.01
+#     SLEEP: float = 0.01
 
-    def __init__(self, queue: Queue[T]):
-        self._Q: Queue[T] = queue
+#     def __init__(self, queue: Queue[T]):
+#         self._Q: Queue[T] = queue
 
-    async def get(self) -> T:
-        """Get an item from the queue.
+#     async def get(self) -> T:
+#         """Get an item from the queue.
 
-        Returns:
-            T: the item from the queue
+#         Returns:
+#             T: the item from the queue
 
-        Raises:
-            Empty: if the queue is empty
-        """
-        while True:
-            try:
-                return self._Q.get_nowait()
-            except Empty:
-                await asyncio.sleep(self.SLEEP)
+#         Raises:
+#             Empty: if the queue is empty
+#         """
+#         while True:
+#             try:
+#                 return self._Q.get_nowait()
+#             except Empty:
+#                 await asyncio.sleep(self.SLEEP)
 
-    async def put(self, item: T) -> None:
-        """Put an item into the queue.
+#     async def put(self, item: T) -> None:
+#         """Put an item into the queue.
 
-        Args:
-            item (T): the item to put into the queue
+#         Args:
+#             item (T): the item to put into the queue
 
-        Returns:
-            None: None
+#         Returns:
+#             None: None
 
-        Raises:
-            Full: if the queue is full
-        """
-        while True:
-            try:
-                self._Q.put_nowait(item)
-                return None
-            except Full:
-                await asyncio.sleep(self.SLEEP)
+#         Raises:
+#             Full: if the queue is full
+#         """
+#         while True:
+#             try:
+#                 self._Q.put_nowait(item)
+#                 return None
+#             except Full:
+#                 await asyncio.sleep(self.SLEEP)
 
-    def task_done(self) -> None:
-        """Mark the item as done.
+#     def task_done(self) -> None:
+#         """Mark the item as done.
 
-        Returns:
-            None: None
-        """
-        self._Q.task_done()
-        return None
+#         Returns:
+#             None: None
+#         """
+#         self._Q.task_done()
+#         return None
 
 # class ManageVerbose:
 #     """Allows to mask print() to the user."""
@@ -141,8 +141,7 @@ class AsyncQueue(Generic[T]):
 
 
 def save_client_request(request: dict) -> bool:
-    # TODO:
-    # save request in an historic (SQL database)
+    # Save request in an historic (SQL database)
 
     return False
 
@@ -367,7 +366,9 @@ def main() -> None:
             chat_number_of_messages="0 message",
             chat_send_button_value='Envoyer',
             chat_input_placeholder='Saisissez votre message ici',
-            footer_text='© 2023 - Agent interactif de Vincent Stragier, Université de Mons et les Amis des Aveugles de Ghlin',
+            footer_text=('© 2023 - Agent interactif de Vincent Stragier,'
+                         ' Université de Mons et '
+                         'les Amis des Aveugles de Ghlin'),
         )
 
     @ socket_io.on('message')
