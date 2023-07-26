@@ -89,7 +89,7 @@ $(document).ready(function () {
     $('#chat').append(
       '<li class="' +
       LiClass +
-      '"><div class="entete">' +
+      '"><div class="header">' +
       MessageHeader +
       '</div>' +
       // '<div class="triangle"></div>' +
