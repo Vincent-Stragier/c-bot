@@ -1,4 +1,9 @@
 ---
+flask:
+  debug: true
+  port: 80
+  host: "0.0.0.0"
+
 html_index:
   title: C-Bot
   chat_title: Your chat

@@ -23,6 +23,7 @@ app = Flask(__name__, instance_relative_config=True)
 app.config["SECRET_KEY"] = os.urandom(24)
 # Load the configuration file
 app.config["config"] = yaml.load(CONFIG_FILE, Loader=yaml.FullLoader)
+app.debug = app.config["config"]["flask"].get("debug", False)
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///faces_database.sqlite'
 # face_database = SQLAlchemy(app)
