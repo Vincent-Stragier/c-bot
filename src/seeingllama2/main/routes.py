@@ -1,18 +1,18 @@
 """Application routes."""
-from flask import render_template, request, send_file
-from . import app as main
+from flask import render_template, request, send_file, current_app
+from . import main
 from .voice import generate_sound_file
 
 
-@ main.route("/")
+@ main.route("/", methods=['GET'])
 def index() -> str:
     # Needs to implement a mechanism to restore the previous session
     # if the user is already connected
     return render_template(
-        "index.htm", **main.config['config']['html_index'])
+        "index.htm", **current_app.config['config']['html_index'])
 
 
-@ main.route('/a')
+@ main.route('/a', methods=['GET'])
 def generate_audio():
     """Generate an audio file from text.
 

@@ -12,36 +12,29 @@
       type="image/svg+xml"
       href="{{ url_for('static', filename='img/favicon.svg')}}"
     />
+    <!-- CSS -->
     <link
       rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      href="{{ url_for('static', filename = 'css/libs/bootstrap.min.css') }}"
     />
-    <!-- <link
-      rel="stylesheet"
-      href="{{url_for('static', filename = 'css/app.css')}}"
-    /> -->
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
-      integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
-      crossorigin="anonymous"
-    ></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"
-      integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ=="
-      crossorigin="anonymous"
-    ></script>
     <link
-      href="//mincss.com/entireframework.min.css"
+      href="{{ url_for('static', filename = 'css/libs/entireframework.min.css') }}"
       rel="stylesheet"
       type="text/css"
     />
     <link
-      href="{{url_for('static', filename = 'css/app.css')}}"
+      href="{{ url_for('static', filename = 'css/app.css') }}"
       rel="stylesheet"
     />
+    <!-- JS -->
+    <script src="{{ url_for('static', filename = 'js/libs/jquery-3.7.0.min.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'js/libs/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'js/libs/bootstrap.min.js') }}"></script>
+    <script
+      src="{{ url_for('static', filename = 'js/libs/socket.io.js') }}"
+      integrity="sha512-Z6C1p1NIexPj5MsVUunW4pg7uMX6/TT3CUVldmjXx2kpip1eZcrAnxIusDxyFIikyM9A61zOVNgvLr/TGudOQg=="
+      crossorigin="anonymous"
+    ></script>
   </head>
   <body>
     <script
@@ -112,8 +105,8 @@
       <main>
         <header>
           <div>
-            <h2>{{chat_title}}</h2>
-            <h3 id="number_of_messages">{{chat_number_of_messages}}</h3>
+            <h2>{{ chat_title }}</h2>
+            <h3 id="number_of_messages">{{ chat_number_of_messages }}</h3>
           </div>
         </header>
         <ol id="chat"></ol>
@@ -124,8 +117,11 @@
               placeholder="{{chat_input_placeholder}}"
               type="text"
             ></textarea>
-            <input id="user_input_button" type="submit"
-            value="{{chat_send_button_value}}"" />
+            <input
+              id="user_input_button"
+              type="submit"
+              value="{{chat_send_button_value}}"
+            />
           </div>
         </footer>
       </main>
@@ -134,7 +130,7 @@
       <div class="container">
         <div class="row">
           <div class="col-12">
-            <p>{{footer_text}}</p>
+            <p>{{ footer_text }}</p>
           </div>
         </div>
       </div>
