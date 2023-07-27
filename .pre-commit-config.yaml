@@ -4,7 +4,7 @@ exclude: (?x)^(.*\/libs\/.*|.*\/img\/.*)$
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.2.0
+    rev: v4.0.0
     hooks:
       - id: check-added-large-files
       - id: check-ast
@@ -30,12 +30,40 @@ repos:
       - id: forbid-new-submodules
       - id: mixed-line-ending
       - id: name-tests-test
-      - id: no-commit-to-branch
+      # - id: no-commit-to-branch
       - id: requirements-txt-fixer
       - id: sort-simple-yaml
       - id: trailing-whitespace
 
   - repo: https://github.com/psf/black
-    rev: 22.10.0
+    rev: 23.7.0
     hooks:
       - id: black
+
+  # Not directly compatible with black
+  # - repo: https://github.com/pre-commit/mirrors-autopep8
+  #   rev: v2.0.2 # Use the sha / tag you want to point at
+  #   hooks:
+  #     - id: autopep8
+
+  # - repo: https://github.com/pre-commit/mirrors-scss-lint
+  #   rev: v0.60.0 # Use the sha / tag you want to point at
+  #   hooks:
+  #     - id: scss-lint
+
+  # - repo: https://github.com/pre-commit/mirrors-mypy
+  #   rev: v1.4.1 # Use the sha / tag you want to point at
+  #   hooks:
+  #     - id: mypy
+  #       additional_dependencies: [setuptools>=, types-PyYAML]
+
+  # Removes encoding programma... added before
+  # - repo: https://github.com/asottile/pyupgrade
+  #   rev: v3.9.0
+  #   hooks:
+  #     - id: pyupgrade
+
+  - repo: https://github.com/asottile/setup-cfg-fmt
+    rev: v2.4.0
+    hooks:
+      - id: setup-cfg-fmt
