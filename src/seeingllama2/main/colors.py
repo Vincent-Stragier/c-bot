@@ -173,8 +173,7 @@ def rgb_to_name(rgb_color_code):
     color_name = None
 
     for name, rgb in NAME_TO_RGB.items():
-
-        distance = (rgb[0] - red)**2 + (rgb[1] - green)**2 + (rgb[2] - blue)**2
+        distance = (rgb[0] - red) ** 2 + (rgb[1] - green) ** 2 + (rgb[2] - blue) ** 2
 
         if min_distance is None or distance < min_distance:
             min_distance = distance
