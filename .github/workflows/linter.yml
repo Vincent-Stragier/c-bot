@@ -59,11 +59,11 @@ jobs:
           VALIDATE_LATEX: false
           # VALIDATE_JSON: true
           # VALIDATE_PYTHON: true
-          VALIDATE_PYTHON_BLACK: false
+          # VALIDATE_PYTHON_BLACK: false
           # VALIDATE_PYTHON_FLAKE8: true
-          VALIDATE_PYTHON_ISORT: false
-          VALIDATE_PYTHON_MYPY: false
-          VALIDATE_JSCPD: false
+          # VALIDATE_PYTHON_ISORT: false
+          # VALIDATE_PYTHON_MYPY: false
+          # VALIDATE_JSCPD: false
 
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
