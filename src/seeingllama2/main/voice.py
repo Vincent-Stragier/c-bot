@@ -9,7 +9,9 @@ import pyttsx4
 engine_tts = pyttsx4.init()
 
 
-def generate_sound_file(text: str, voice: int, rate: float = 200, volume: float = 1.0) -> io.BytesIO:
+def generate_sound_file(
+    text: str, voice: int, rate: float = 200, volume: float = 1.0
+) -> io.BytesIO:
     """Generate a sound file from text.
 
     Args:
@@ -23,16 +25,15 @@ def generate_sound_file(text: str, voice: int, rate: float = 200, volume: float 
     """
     temp_file = io.BytesIO()
     with tempfile.TemporaryDirectory() as temp_dir:
-
         # Set the voice
-        voice = engine_tts.getProperty('voices')[voice]
-        engine_tts.setProperty('voice', voice.id)
+        voice = engine_tts.getProperty("voices")[voice]
+        engine_tts.setProperty("voice", voice.id)
         # Default is 200 words per minute
-        engine_tts.setProperty('rate', rate)
-        engine_tts.setProperty('volume', volume)
+        engine_tts.setProperty("rate", rate)
+        engine_tts.setProperty("volume", volume)
 
         # Save the file
-        file_name = os.path.join(temp_dir, 'sound.mp3')
+        file_name = os.path.join(temp_dir, "sound.mp3")
         engine_tts.save_to_file(text, file_name)
         engine_tts.runAndWait()
 
@@ -41,7 +42,7 @@ def generate_sound_file(text: str, voice: int, rate: float = 200, volume: float 
             pass
 
         # Read the file
-        with open(file_name, 'rb') as audio_file:
+        with open(file_name, "rb") as audio_file:
             temp_file = io.BytesIO(audio_file.read())
 
     return temp_file

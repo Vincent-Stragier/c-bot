@@ -6,25 +6,25 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 # Create a file handler
-handler = logging.FileHandler('interpreter.log')
+handler = logging.FileHandler("interpreter.log")
 handler.setLevel(logging.DEBUG)
 
 AUTHORIZED_COMMANDS = [
-    'detect',
-    'color',
-    'colors',
-    'navigation',
-    'position',
-    'add',
-    'remove',
-    'look_for',
-    'enumerate_individuals',
-    'age_estimation',
-    'emotion_estimation',
-    'ocr',
-    'money',
-    'environment',
-    'environment_question',
+    "detect",
+    "color",
+    "colors",
+    "navigation",
+    "position",
+    "add",
+    "remove",
+    "look_for",
+    "enumerate_individuals",
+    "age_estimation",
+    "emotion_estimation",
+    "ocr",
+    "money",
+    "environment",
+    "environment_question",
 ]
 
 
@@ -38,9 +38,9 @@ def detect(object_to_detect: str | None = None) -> bool | list:
         bool|list: True or False if the object is detected, else a list of objects.
     """
     # Detect all the objects here
-    detected_objects = ['chair', 'mocked module']
-    logger.debug('detected_objects: %s', detected_objects)
-    logger.info('mocked detect')
+    detected_objects = ["chair", "mocked module"]
+    logger.debug("detected_objects: %s", detected_objects)
+    logger.info("mocked detect")
 
     if object_to_detect is None:
         return detected_objects
@@ -48,7 +48,7 @@ def detect(object_to_detect: str | None = None) -> bool | list:
     if isinstance(object_to_detect, str):
         return object_to_detect in detected_objects
 
-    raise ValueError('`object_to_detect` should be None, or a string.')
+    raise ValueError("`object_to_detect` should be None, or a string.")
 
 
 def color(object_name: str | None = None) -> tuple:
@@ -60,18 +60,26 @@ def color(object_name: str | None = None) -> tuple:
     Returns:
         tuple: The color in RGB
     """
-    logger.info('mocked color')
+    logger.info("mocked color")
 
     if object_name is None:
         # Compute the mean color of the input frame
-        return 0, 0, 255,
+        return (
+            0,
+            0,
+            255,
+        )
 
     if isinstance(object_name, str):
         # Detect object and realize mean on the area of the bounding box
         # or on the segmented area ???
-        return 255, 0, 0,
+        return (
+            255,
+            0,
+            0,
+        )
 
-    raise ValueError('`object_to_detect` should be None, or a string.')
+    raise ValueError("`object_to_detect` should be None, or a string.")
 
 
 def colors() -> tuple:
@@ -80,8 +88,12 @@ def colors() -> tuple:
     Returns:
         tuple: The color in RGB
     """
-    logger.info('mocked colors')
-    return 0, 255, 0,
+    logger.info("mocked colors")
+    return (
+        0,
+        255,
+        0,
+    )
 
 
 def navigation(destination: str) -> str:
@@ -93,8 +105,8 @@ def navigation(destination: str) -> str:
     Returns:
         str: The status of the navigation.
     """
-    logger.info('mocked navigation')
-    return f'You have reached your {destination}.'
+    logger.info("mocked navigation")
+    return f"You have reached your {destination}."
 
 
 def position() -> dict:
@@ -103,8 +115,8 @@ def position() -> dict:
     Returns:
         tuple: The position of the user
     """
-    logger.info('mocked position')
-    return {'latitude': 25, 'longitude': 65, 'altitude': 9}
+    logger.info("mocked position")
+    return {"latitude": 25, "longitude": 65, "altitude": 9}
 
 
 def add() -> str:
@@ -113,8 +125,8 @@ def add() -> str:
     Returns:
         str: The status of the addition.
     """
-    logger.info('mocked add')
-    return 'Face successfully added.'
+    logger.info("mocked add")
+    return "Face successfully added."
 
 
 def remove() -> str:
@@ -123,8 +135,8 @@ def remove() -> str:
     Returns:
         str: The status of the removal.
     """
-    logger.info('mocked remove')
-    return 'Face successfully removed.'
+    logger.info("mocked remove")
+    return "Face successfully removed."
 
 
 def look_for(name: str) -> str:
@@ -137,8 +149,8 @@ def look_for(name: str) -> str:
     Returns:
         str: The status of the search.
     """
-    logger.info('mocked look_for')
-    return f'{name} found.'
+    logger.info("mocked look_for")
+    return f"{name} found."
 
 
 def enumerate_individuals() -> list:
@@ -147,8 +159,8 @@ def enumerate_individuals() -> list:
     Returns:
         list: The list of the individuals.
     """
-    logger.info('mocked enumerate_individuals')
-    return ['individual1', 'individual2', 'jhon doe', 'jane doe', 'mocked individual']
+    logger.info("mocked enumerate_individuals")
+    return ["individual1", "individual2", "jhon doe", "jane doe", "mocked individual"]
 
 
 def age_estimation(name: str) -> int:
@@ -160,7 +172,7 @@ def age_estimation(name: str) -> int:
     Returns:
         int: The estimated age.
     """
-    logger.info('mocked age_estimation of %s', name)
+    logger.info("mocked age_estimation of %s", name)
     return 25
 
 
@@ -173,8 +185,8 @@ def emotion_estimation(name: str) -> str:
     Returns:
         str: The estimated emotion.
     """
-    logger.info('mocked emotion_estimation of %s', name)
-    return 'neutral'
+    logger.info("mocked emotion_estimation of %s", name)
+    return "neutral"
 
 
 def ocr(object_name: str | None = None) -> str:
@@ -186,17 +198,17 @@ def ocr(object_name: str | None = None) -> str:
     Returns:
         str: The text read.
     """
-    logger.info('mocked ocr')
+    logger.info("mocked ocr")
 
     if object_name is None:
         # Read the text on the whole image
-        return 'mocked text on the whole image'
+        return "mocked text on the whole image"
 
     if isinstance(object_name, str):
         # Detect object and read the text on the area of the bounding box
-        return 'mocked text on the object'
+        return "mocked text on the object"
 
-    raise ValueError('`object_to_detect` should be None, or a string.')
+    raise ValueError("`object_to_detect` should be None, or a string.")
 
 
 def money() -> dict:
@@ -205,8 +217,8 @@ def money() -> dict:
     Returns:
         int: The amount of money.
     """
-    logger.info('mocked money')
-    return {'total_amount': 25, 'currency': 'EUR', 'details': (5, 10, 10)}
+    logger.info("mocked money")
+    return {"total_amount": 25, "currency": "EUR", "details": (5, 10, 10)}
 
 
 def environment() -> str:
@@ -215,8 +227,8 @@ def environment() -> str:
     Returns:
         str: The description of the environment.
     """
-    logger.info('mocked environment')
-    return 'mocked environment description'
+    logger.info("mocked environment")
+    return "mocked environment description"
 
 
 def environment_question(question: str) -> str:
@@ -228,8 +240,8 @@ def environment_question(question: str) -> str:
     Returns:
         str: The answer to the question.
     """
-    logger.info('mocked environment_question: %s', question)
-    return 'mocked answer to the question'
+    logger.info("mocked environment_question: %s", question)
+    return "mocked answer to the question"
 
 
 def interpreter(command: str, run: bool = False):
@@ -253,6 +265,7 @@ def interpreter(command: str, run: bool = False):
         functor, parameters or return of the running function: the functor and
         the parameters or the return of the running function
     """
+
     # Extract the parameters from the command
     def extract_parameters(parameters_string: str) -> list:
         """Extract the parameters from the parameters string.
@@ -263,13 +276,13 @@ def interpreter(command: str, run: bool = False):
         Returns:
             list: the parameters
         """
-        separator = ','
-        quotes = ['\'', '\"']
-        escape = '\\'
+        separator = ","
+        quotes = ["'", '"']
+        escape = "\\"
 
         inhibited = False
         parameters = []
-        accumulator = ''
+        accumulator = ""
 
         parameters_string = parameters_string.strip()
 
@@ -278,8 +291,7 @@ def interpreter(command: str, run: bool = False):
             accumulator += char
 
             # Check if the character is in quotes and if it is not escaped.
-            if (char in quotes
-                    and parameters_string[index - 1] != escape):
+            if char in quotes and parameters_string[index - 1] != escape:
                 inhibited = not inhibited
 
             if char == separator:
@@ -289,7 +301,7 @@ def interpreter(command: str, run: bool = False):
                     parameters.append(accumulator[:-1].strip())
 
                     # Reset the accumulator
-                    accumulator = ''
+                    accumulator = ""
 
         return parameters + [accumulator.strip()]
 
@@ -322,31 +334,29 @@ def interpreter(command: str, run: bool = False):
                 try:
                     parameters[index] = float(parameter)
                 except ValueError:
-                    if parameter.startswith(('b"', 'b\'')):
+                    if parameter.startswith(('b"', "b'")):
                         parameters[index] = parameter[2:-1].encode()
 
-                    elif parameter.startswith(('0x', '0X')):
+                    elif parameter.startswith(("0x", "0X")):
                         parameters[index] = int(parameter, 16)
 
-                    elif parameter.startswith(('0b', '0B')):
+                    elif parameter.startswith(("0b", "0B")):
                         parameters[index] = int(parameter, 2)
 
-                    elif parameter == 'True':
+                    elif parameter == "True":
                         parameters[index] = True
 
-                    elif parameter == 'False':
+                    elif parameter == "False":
                         parameters[index] = False
 
-                    elif parameter == 'None':
+                    elif parameter == "None":
                         parameters[index] = None
 
-                    elif (parameter.startswith('\"') and
-                          parameter.endswith('\"')):
-                        parameters[index] = parameter[1:-1].replace('\\', '')
+                    elif parameter.startswith('"') and parameter.endswith('"'):
+                        parameters[index] = parameter[1:-1].replace("\\", "")
 
-                    elif (parameter.startswith('\'') and
-                          parameter.endswith('\'')):
-                        parameters[index] = parameter[1:-1].replace('\\', '')
+                    elif parameter.startswith("'") and parameter.endswith("'"):
+                        parameters[index] = parameter[1:-1].replace("\\", "")
 
         return command_name, parameters
 
@@ -357,7 +367,7 @@ def interpreter(command: str, run: bool = False):
     if command_name in AUTHORIZED_COMMANDS:
         functor = globals()[command_name]
     else:
-        raise ValueError(f'`{command_name}` is not an authorized command.')
+        raise ValueError(f"`{command_name}` is not an authorized command.")
 
     # Run the function if asked to
     if run:
@@ -366,7 +376,7 @@ def interpreter(command: str, run: bool = False):
     return functor, parameters
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # interpreter('detect( "chair 25\\"", \'jf\', 25, 2.5, b"test,test",
     # 0x25, 0b01, True, False, None, "test", your_age=25)', run=True)
     print(interpreter("detect(None)", run=True))
