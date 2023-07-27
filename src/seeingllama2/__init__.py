@@ -16,8 +16,7 @@ from seeingllama2.main.utils import setlocale  # noqa: E402 isort:skip
 
 monkey_patch()
 
-CONFIG_FILE = pkg_resources.resource_string(
-    __name__, "config/configuration.yaml")
+CONFIG_FILE = pkg_resources.resource_string(__name__, "config/configuration.yaml")
 PROMPT_FILE = pkg_resources.resource_string(__name__, "config/prompt.txt")
 
 app = Flask(__name__, instance_relative_config=True)
