@@ -1,10 +1,13 @@
+---
 html_index:
   title: C-Bot
   chat_title: Your chat
   chat_number_of_messages: 0 message
   chat_send_button_value: Send
   chat_input_placeholder: Write your message here
-  footer_text: © 2023 - C-Bot, handmade by Vincent Stragier, University of Mons and les Amis des Aveugles, Ghlin
+  footer_text: >-
+    © 2023 - C-Bot, handmade by Vincent Stragier,
+    University of Mons and les Amis des Aveugles, Ghlin
 
 js_app:
   bot_name: C-Bot
