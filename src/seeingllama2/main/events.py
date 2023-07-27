@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from flask import current_app, request
-# from flask import session
-from flask_socketio import emit  # , join_room, leave_room
+from flask_socketio import emit
 
 from seeingllama2 import socketio
 
