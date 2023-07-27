@@ -27,7 +27,7 @@ def generate_sound_file(
     with tempfile.TemporaryDirectory() as temp_dir:
         # Set the voice
         voice = engine_tts.getProperty("voices")[voice]
-        engine_tts.setProperty("voice", voice.id)
+        engine_tts.setProperty("voice", voice.id)  # type: ignore[attr-defined]
         # Default is 200 words per minute
         engine_tts.setProperty("rate", rate)
         engine_tts.setProperty("volume", volume)
