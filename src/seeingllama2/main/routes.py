@@ -1,5 +1,6 @@
 """Application routes."""
-from flask import render_template, request, send_file, current_app
+from flask import current_app, render_template, request, send_file
+
 from . import main
 from .voice import generate_sound_file
 

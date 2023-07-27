@@ -1,7 +1,7 @@
 """The utils module contains utility functions the module uses."""
 import locale
-from multiprocessing import Lock
 from contextlib import contextmanager
+from multiprocessing import Lock
 
 LOCALE_LOCK = Lock()
 
