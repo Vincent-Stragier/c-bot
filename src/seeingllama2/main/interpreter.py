@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """This module is used to interpret the function call of the LLMs."""
 import logging
 import re

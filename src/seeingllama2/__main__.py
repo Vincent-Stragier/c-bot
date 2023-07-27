@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Main entry point for the application when run with the -m switch."""
 from seeingllama2 import app, socketio
 

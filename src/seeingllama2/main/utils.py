@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """The utils module contains utility functions the module uses."""
 import locale
 from contextlib import contextmanager

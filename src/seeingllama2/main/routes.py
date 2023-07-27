@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Application routes."""
 from flask import current_app, render_template, request, send_file
 

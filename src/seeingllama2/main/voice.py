@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Text to speech module."""
 import io
 import os

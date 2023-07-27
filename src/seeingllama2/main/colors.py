@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Convert RGB to color name."""
 
 # X11 color names
