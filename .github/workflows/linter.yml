@@ -50,12 +50,12 @@ jobs:
       ################################
       - name: Lint Code Base
         uses: github/super-linter/slim@v4
-        
+
         env:
           # VALIDATE_ALL_CODEBASE: false
           # ACTIONS_RUNNER_DEBUG: true
-          # FILTER_REGEX_INCLUDE: .*src/.* .*test/.* .*old/.*, 
-          # FILTER_REGEX_EXCLUDE: (./reports/.*|./jobs_scripts/template.sh)
+          # FILTER_REGEX_INCLUDE: .*src/.* .*test/.* .*old/.*,
+          FILTER_REGEX_EXCLUDE: (./libs/.*)
           VALIDATE_LATEX: false
           # VALIDATE_JSON: true
           # VALIDATE_PYTHON: true
