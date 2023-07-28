@@ -24,7 +24,7 @@ interface:
 voice:
   id: 2
   rate: 200
-  volume: 100
+  volume: 1.0
 
 llm_api:
   url: "localhost"
