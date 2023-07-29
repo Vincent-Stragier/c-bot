@@ -5,6 +5,7 @@ from flask import current_app, request
 from flask_socketio import emit
 
 from seeingllama2 import socketio
+from seeingllama2.main.dialog_manager import DialogManager
 
 
 @socketio.on("message")
@@ -17,10 +18,25 @@ def handle_message(message):
     voice_config = current_app.config["config"]["voice"]
     js_app_config = current_app.config["config"]["js_app"]
 
+    # Send the message to the dialog manager
+    dialog_manager = DialogManager(
+        request_id=request.sid,
+        connector=current_app.config["config"]["llm_api"]["name"],
+        base_url=(
+            f'{current_app.config["config"]["llm_api"]["url"]}:'
+            f'{current_app.config["config"]["llm_api"]["port"]}'
+        ),
+        api_path=current_app.config["config"]["llm_api"]["path"],
+    )
+
+    response = dialog_manager.get_response(message)
+
+    print(f"Response: {response}")
+
     emit(
         "message",
         {
-            "content": message,
+            "content": response,
             "end": True,
             "start": True,
             "bot_name": js_app_config.get("bot_name", "C-Bot"),
@@ -32,7 +48,7 @@ def handle_message(message):
     emit(
         "speech",
         {
-            "text": message,
+            "text": response,
             "voice": voice_config.get("id", 0),
             "rate": voice_config.get("rate", 200),
             "volume": voice_config.get("volume", 1),
