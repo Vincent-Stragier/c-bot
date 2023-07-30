@@ -21,7 +21,7 @@ if __name__ == "__main__":
 
     if args.config:
         # See __init__.py for the config loading
-        app.config["config"].update(yaml.load(args.config, Loader=yaml.FullLoader))
+        app.config["config"].update(**yaml.load(args.config, Loader=yaml.FullLoader))
         app.debug = app.config["config"]["flask"].get("debug", False)
 
         # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///faces_database.sqlite'
