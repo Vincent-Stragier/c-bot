@@ -3,7 +3,8 @@ import os
 
 import pkg_resources
 import yaml
-from eventlet import monkey_patch
+
+# from eventlet import monkey_patch
 from flask import Flask
 from flask_socketio import SocketIO
 
@@ -15,7 +16,7 @@ socketio = SocketIO(cors_allowed_origins="*", threaded=True)
 from seeingllama2.main import main as main_blueprint  # noqa: E402 isort:skip
 from seeingllama2.main.utils import setlocale  # noqa: E402 isort:skip
 
-monkey_patch()
+# monkey_patch()
 
 CONFIG_FILE = pkg_resources.resource_string(__name__, "config/configuration.yaml")
 PROMPT_FILE = pkg_resources.resource_string(__name__, "config/prompt.txt")
