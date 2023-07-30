@@ -29,7 +29,7 @@ def handle_message(message):
         api_path=current_app.config["config"]["llm_api"]["path"],
     )
 
-    response = dialog_manager.get_response(message)
+    response = dialog_manager.get_response(f"<user>{message}</user>")
 
     print(f"Response: {response}")
 

@@ -2,10 +2,9 @@
 """This module contains the DialogManager class, which is responsible for managing the dialog system."""
 from multiprocessing import Lock
 
-from flask import current_app
-
 from seeingllama2.main.large_language_models import connectors
-from seeingllama2.main.interpreter import interpreter
+
+# from seeingllama2.main.interpreter import interpreter
 
 MANAGER_DATA_LOCK = Lock()
 
@@ -83,18 +82,23 @@ class DialogManager:
             return "Error: LLM not responding."
 
         # Update chat history
-        self.chat_history["visible"].append(["user", user_input])
-        self.chat_history["visible"].append(["llm", response])
+        visible_chat_history = self.chat_history["visible"]
+        visible_chat_history = visible_chat_history + [
+            ["user", user_input],
+            ["llm", response],
+        ]
+        self.chat_history["visible"] = visible_chat_history
 
+        print("Chat history:")
         print(self.chat_history)
 
-        # Parse response from LLM <bot to='tool'>function(param1, param2)</bot>
-        tool_call = str(response)
-        tool_call = tool_call[tool_call.rfind("<bot to=") + 10 :]
+        # # Parse response from LLM <bot to='tool'>function(param1, param2)</bot>
+        # tool_call = str(response)
+        # tool_call = tool_call[tool_call.rfind("<bot to=") + 10 :]
 
-        tool_response = interpreter(tool_call, run=True)
+        # tool_response = interpreter(tool_call, run=True)
 
-        print(f"Tool response: {tool_response}")
+        # print(f"Tool response: {tool_response}")
 
         # Run corresponding tool
 
