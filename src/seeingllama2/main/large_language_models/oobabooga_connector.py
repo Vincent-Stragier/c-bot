@@ -25,8 +25,8 @@ DEFAULT_PARAMS = {
     # in presets/preset-name.yaml are used instead of the individual numbers.
     "preset": "None",
     "do_sample": True,
-    "temperature": 0.7,
-    "top_p": 0.1,
+    "temperature": 0.6,
+    "top_p": 0.9,
     "typical_p": 1,
     "epsilon_cutoff": 0,  # In units of 1e-4
     "eta_cutoff": 0,  # In units of 1e-4
