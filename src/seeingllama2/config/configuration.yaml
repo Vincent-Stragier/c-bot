@@ -28,7 +28,7 @@ voice:
 
 llm_api:
   name: oobabooga
-  url: "https://loved-quietly-seal.ngrok-free.app"
-  port: 443
+  url: "http:127.0.0.1"
+  port: 5000
   path: "/api/v1/chat"
   token: "jl5sd5f78244cf"
