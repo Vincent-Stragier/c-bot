@@ -7,8 +7,8 @@ from flask import current_app
 DEFAULT_PARAMS = {
     "user_input": "",
     "max_new_tokens": 800,
-    "history": "",
-    "mode": "chat-instruct",  # Valid options: 'chat', 'chat-instruct', 'instruct'
+    "history": {"internal": [], "visible": []},
+    "mode": "chat",  # Valid options: 'chat', 'chat-instruct', 'instruct'
     "character": "Example",
     # 'instruction_template': 'Vicuna-v1.1',  # Will get autodetected if unset
     # 'context_instruct': '',  # Optional
@@ -17,10 +17,10 @@ DEFAULT_PARAMS = {
     "_continue": False,
     "stop_at_newline": False,
     "chat_generation_attempts": 1,
-    "chat-instruct_command": (
-        "Continue the chat dialogue below. "
-        'Write a single reply for the character "<|character|>".\n\n<|prompt|>'
-    ),
+    # "chat-instruct_command": (
+    #     "Continue the chat dialogue below. "
+    #     'Write a single reply for the character "<|character|>".\n\n<|prompt|>'
+    # ),
     # Generation params. If 'preset' is set to different than 'None', the values
     # in presets/preset-name.yaml are used instead of the individual numbers.
     "preset": "None",
@@ -86,8 +86,10 @@ class OobaboogaConnector:
 
         request = self.params
 
-        request["user_input"] = user_input
-        request["history"] = chat_history
+        # We will need a rolling history of the chat, so we can't just append
+        # the user input to the history.
+        request["user_input"] = f'{current_app.config["prompt"]}\n{user_input}'
+        # request["history"] = chat_history
         request[
             "chat-instruct_command"
         ] = f'{current_app.config["prompt"]}<|character|>".\n\n<|prompt|>'
@@ -104,6 +106,7 @@ class OobaboogaConnector:
         print(f"Response: {response}")
 
         if response.status_code == 200:
+            print(response.text)
             return response.json()["results"][0]["history"]["visible"][-1][1]
 
         return response.status_code
