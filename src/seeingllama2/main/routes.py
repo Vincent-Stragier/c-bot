@@ -1,9 +1,34 @@
 # -*- coding: utf-8 -*-
 """Application routes."""
-from flask import current_app, render_template, request, send_file
+from flask import current_app, redirect, render_template, request, send_file
 
 from . import main
 from .voice import generate_sound_file
+
+
+@main.before_request
+def redirect_to_right_scheme():
+    """Redirect to the HTTPS version if needed, otherwise to the HTTP version."""
+    # print("before_request is working?")
+    if current_app.env == "development":
+        return
+    if request.is_secure:
+        return
+
+    use_ssl = current_app.config["config"]["flask"].get("ssl", False)
+    if request.url.startswith("http://") and use_ssl:
+        # print("Redirecting to HTTPS")
+        url = request.url.replace("http://", "https://", 1)
+        # print(url)
+        return redirect(url, code=301)
+
+    if request.url.startswith("https://") and not use_ssl:
+        # print("Redirecting to HTTP")
+        url = request.url.replace("https://", "http://", 1)
+        # print(url)
+        return redirect(url, code=301)
+
+    return
 
 
 @main.route("/", methods=["GET"])

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """OobaboogaConnector class."""
 import requests
-
 from flask import current_app
 
 DEFAULT_PARAMS = {

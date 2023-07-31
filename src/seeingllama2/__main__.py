@@ -4,7 +4,7 @@ import argparse
 
 import yaml
 
-from seeingllama2 import app, socketio, setlocale
+from seeingllama2 import app, setlocale, socketio
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("Seeing Llama 2")
@@ -43,6 +43,9 @@ if __name__ == "__main__":
 
     ssl_keyfile = app.config["config"]["flask"].get("ssl_keyfile", None)
     ssl_certfile = app.config["config"]["flask"].get("ssl_certfile", None)
+    app.config["config"]["flask"]["ssl"] = (
+        True if ssl_keyfile and ssl_certfile else False
+    )
 
     # If we have a keyfile and a certfile, we are in HTTPS mode
     server_side_mode = True if ssl_keyfile and ssl_certfile else False
