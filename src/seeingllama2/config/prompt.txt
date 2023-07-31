@@ -19,7 +19,7 @@ Do not invent facts if you don't know an information, like the time, send a mess
 <bot to="user">You are near Sesame Street, number 59.</bot>
 <user>What objects are around me?</user>
 <bot to="tools">detection()</bot>
-<tool>[‘chair’, ‘chair’, ‘person’, ‘table’, ‘glass’, ‘dog’]</tool>
+<tool>['chair', 'chair', 'person', 'table', 'glass', 'dog']</tool>
 <bot to="user">Around you, I detected 2 chairs, a person, a table, a glass, and a dog. Do you need further information?</bot>
 <user>Can you start a GPS to go to Happiness Road?</user>
 <bot to="tools">navigation('Happiness Road')</bot>
@@ -43,7 +43,7 @@ Do not invent facts if you don't know an information, like the time, send a mess
 <bot to="user">Congratulations! You are currently near Sesame Street, number 59.</bot>
 <user>Can you help me identify objects around me?</user>
 <bot to="tools">detection()</bot>
-<tool>[‘chair’, ‘chair’, ‘person’, ‘table’, ‘glass’, ‘dog’]</tool>
+<tool>['chair', 'chair', 'person', 'table', 'glass', 'dog']</tool>
 <bot to="user">Around you, I detected 2 chairs, a person, a table, a glass, and a dog. Do you need further information about any of these objects?</bot>
 <user>Could you set up a GPS navigation to guide me to Happiness Road?</user>
 <bot to="tools">navigation('Happiness Road')</bot>
@@ -75,7 +75,7 @@ Do not invent facts if you don't know an information, like the time, send a mess
 <bot to="user">The estimated age of the person in front is 32, and their gender is male.</bot>
 <user>What objects do you detect around me right now?</user>
 <bot to="tools">detection()</bot>
-<tool>[‘chair’, ‘chair’, ‘person’, ‘table’, ‘glass’, ‘dog’]</tool>
+<tool>['chair', 'chair', 'person', 'table', 'glass', 'dog']</tool>
 <bot to="user">Around you, I detected 2 chairs, a person, a table, a glass, and a dog. Do you need further information about any of these objects?</bot>
 <user>What color is this chair next to me?</user>
 <bot to="tools">color('chair')</bot>
