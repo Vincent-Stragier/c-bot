@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """OobaboogaConnector class."""
 import requests
+from requests.auth import HTTPBasicAuth
+
 from flask import current_app
 
 DEFAULT_PARAMS = {
@@ -58,8 +60,17 @@ class OobaboogaConnector:
     def __init__(self, base_url="http://127.0.0.1:7860", api_path="/api/v1/chat"):
         """Initialize OobaBoogaConnector."""
         self.url = base_url + api_path
-        print(f"URL: {self.url}")
         self.params = DEFAULT_PARAMS
+        self.basic_auth = False
+
+        if current_app.config["config"]["llm_api"].get("http_basic_auth", False):
+            self.basic_auth = True
+            self.username = current_app.config["config"]["llm_api"]["http_basic_auth"][
+                "username"
+            ]
+            self.password = current_app.config["config"]["llm_api"]["http_basic_auth"][
+                "password"
+            ]
 
     def set_params(self, params: dict):
         """Set the parameters.
@@ -95,12 +106,16 @@ class OobaboogaConnector:
 
         print(f"Request: {request}")
 
-        response = requests.post(
-            self.url,
-            json=request,
-            headers={"ngrok-skip-browser-warning": "true"},
-            timeout=120,
-        )
+        resquest_params = {
+            "json": request,
+            "headers": {"ngrok-skip-browser-warning": "true"},
+            "timeout": 120,
+        }
+
+        if self.basic_auth:
+            resquest_params["auth"] = HTTPBasicAuth(self.username, self.password)
+
+        response = requests.post(self.url, **resquest_params)
 
         print(f"Response: {response}")
 
