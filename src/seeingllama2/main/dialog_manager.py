@@ -34,7 +34,6 @@ class DialogManager:
     ):
         """Initialize DialogManager."""
         MANAGER_DATA_LOCK.acquire()
-
         if request_id not in manager_data:
             manager_data[request_id] = {
                 "request_id": request_id,
@@ -82,11 +81,10 @@ class DialogManager:
             return "Error: LLM not responding."
 
         # Update chat history
-        visible_chat_history = self.chat_history["visible"]
-        visible_chat_history = visible_chat_history + [
-            ["user", user_input],
-            ["llm", response],
-        ]
+        visible_chat_history = self.chat_history.get("visible", [])
+        visible_chat_history = (
+            visible_chat_history + ["user", user_input] + ["llm", response]
+        )
         self.chat_history["visible"] = visible_chat_history
 
         print("Chat history:")
