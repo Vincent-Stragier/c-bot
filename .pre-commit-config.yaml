@@ -1,6 +1,11 @@
 ---
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
+# Run `pre-commit install` to install pre-commit into your git hooks
+# Run `pre-commit autoupdate` to automatically update this file
+# Run `pre-commit run --a` to run all hooks on all files
+
+# You may want to exclude some files using regex
 exclude: (?x)^(.*\/libs\/.*|.*\/img\/.*)$
 
 repos:
@@ -36,10 +41,26 @@ repos:
       - id: sort-simple-yaml
       - id: trailing-whitespace
 
+  - repo: https://github.com/asottile/seed-isort-config
+    rev: v1.9.3
+    hooks:
+      - id: seed-isort-config
+
+  - repo: https://github.com/pre-commit/mirrors-isort
+    rev: v4.3.21
+    hooks:
+      - id: isort
+
   - repo: https://github.com/psf/black
     rev: 23.7.0
     hooks:
       - id: black
+        language_version: python3.10
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 6.1.0
+    hooks:
+      - id: flake8
 
   # Not directly compatible with black
   # - repo: https://github.com/pre-commit/mirrors-autopep8
