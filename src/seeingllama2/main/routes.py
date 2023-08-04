@@ -8,12 +8,17 @@ from .voice import generate_sound_file
 
 @main.before_request
 def redirect_to_right_scheme():
-    """Redirect to the HTTPS version if needed, otherwise to the HTTP version."""
+    """Redirect to the HTTPS version if needed.
+
+    Returns:
+        None: if the request is already HTTPS or if we are in development mode
+        redirect: if the request is HTTP and we are not in development mode
+    """
     # print("before_request is working?")
     if current_app.env == "development":
-        return
+        return None
     if request.is_secure:
-        return
+        return None
 
     use_ssl = current_app.config["config"]["flask"].get("ssl", False)
     if request.url.startswith("http://") and use_ssl:
@@ -22,20 +27,27 @@ def redirect_to_right_scheme():
         # print(url)
         return redirect(url, code=301)
 
-    if request.url.startswith("https://") and not use_ssl:
-        # print("Redirecting to HTTP")
-        url = request.url.replace("https://", "http://", 1)
-        # print(url)
-        return redirect(url, code=301)
+    # if request.url.startswith("https://") and not use_ssl:
+    #     # print("Redirecting to HTTP")
+    #     url = request.url.replace("https://", "http://", 1)
+    #     # print(url)
+    #     return redirect(url, code=301)
 
-    return
+    return None
 
 
 @main.route("/", methods=["GET"])
 def index() -> str:
+    """Index page.
+
+    Returns:
+        str: the HTML page
+    """
     # Needs to implement a mechanism to restore the previous session
     # if the user is already connected
-    return render_template("index.htm", **current_app.config["config"]["html_index"])
+    return render_template(
+        "index.htm", **current_app.config["config"]["html_index"]
+    )
 
 
 @main.route("/a", methods=["GET"])

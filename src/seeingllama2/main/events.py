@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from flask import current_app, request
 from flask_socketio import emit
-
 from seeingllama2 import socketio
 from seeingllama2.main.dialog_manager import DialogManager
 
@@ -65,7 +64,9 @@ def handle_message(message):
 @socketio.on("connect")
 def handle_connect():
     """Handle a connection to the websocket."""
-    username = current_app.config["config"]["js_app"].get("username", "Anonymous")
+    username = current_app.config["config"]["js_app"].get(
+        "username", "Anonymous"
+    )
     emit("username", {"username": username}, room=request.sid)
     print(f"Client connected {request.sid = }")
 

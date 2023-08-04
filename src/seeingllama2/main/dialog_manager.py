@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This module contains the DialogManager class, which is responsible for managing the dialog system."""
+"""DialogManager class, responsible for managing the dialog system."""
 from multiprocessing import Lock
 
 from seeingllama2.main.large_language_models import connectors
@@ -90,7 +90,8 @@ class DialogManager:
         print("Chat history:")
         print(self.chat_history)
 
-        # # Parse response from LLM <bot to='tool'>function(param1, param2)</bot>
+        # Parse response from LLM:
+        # <bot to='tool'>function(param1, param2)</bot>
         # tool_call = str(response)
         # tool_call = tool_call[tool_call.rfind("<bot to=") + 10 :]
 

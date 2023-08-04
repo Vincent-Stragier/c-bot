@@ -3,12 +3,13 @@
 import argparse
 
 import yaml
-
 from seeingllama2 import app, setlocale, socketio
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("Seeing Llama 2")
-    parser.add_argument("--config", "-c", type=str, help="Path to the config file")
+    parser.add_argument(
+        "--config", "-c", type=str, help="Path to the config file"
+    )
     parser.add_argument(
         "--prompt",
         "-p",
@@ -23,10 +24,14 @@ if __name__ == "__main__":
         # See __init__.py for the config loading
         # Load the configuration file
         with open(args.config, "r", encoding="utf-8") as config_file:
-            app.config["config"].update(yaml.load(config_file, Loader=yaml.FullLoader))
+            app.config["config"].update(
+                yaml.load(config_file, Loader=yaml.FullLoader)
+            )
             app.debug = app.config["config"]["flask"].get("debug", False)
 
-        # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///faces_database.sqlite'
+        # app.config[
+        #     "SQLALCHEMY_DATABASE_URI"
+        # ] = "sqlite:///faces_database.sqlite"
         # face_database = SQLAlchemy(app)
 
         setlocale(app.config["config"]["interface"]["locale"])

@@ -33,10 +33,12 @@ def detect(object_to_detect: str | None = None) -> bool | list:
     """Detect the visible object using a model such as YOLOv8.
 
     Args:
-        object_to_detect (str | None, optional): The object to detect. Defaults to None.
+        object_to_detect (str | None, optional): The object to detect.
+        Defaults to None.
 
     Returns:
-        bool|list: True or False if the object is detected, else a list of objects.
+        bool|list: True or False if the object is detected,
+        else a list of objects.
     """
     # Detect all the objects here
     detected_objects = ["chair", "mocked module"]
@@ -56,7 +58,8 @@ def color(object_name: str | None = None) -> tuple:
     """Pick the dominant color of the mentioned object or of the environment.
 
     Args:
-        object_name (str | None, optional): The name of the object. Defaults to None.
+        object_name (str | None, optional): The name of the object.
+        Defaults to None.
 
     Returns:
         tuple: The color in RGB
@@ -161,7 +164,13 @@ def enumerate_individuals() -> list:
         list: The list of the individuals.
     """
     logger.info("mocked enumerate_individuals")
-    return ["individual1", "individual2", "jhon doe", "jane doe", "mocked individual"]
+    return [
+        "individual1",
+        "individual2",
+        "jhon doe",
+        "jane doe",
+        "mocked individual",
+    ]
 
 
 def age_estimation(name: str) -> int:
@@ -194,7 +203,8 @@ def ocr(object_name: str | None = None) -> str:
     """Read the text on the mentioned object or on the every object.
 
     Args:
-        object_name (str | None, optional): The name of the object. Defaults to None.
+        object_name (str | None, optional): The name of the object.
+        Defaults to None.
 
     Returns:
         str: The text read.
@@ -245,6 +255,100 @@ def environment_question(question: str) -> str:
     return "mocked answer to the question"
 
 
+def extract_parameters(parameters_string: str) -> list:
+    """Extract the parameters from the parameters string.
+
+    Args:
+        parameters_string (str): the parameters string.
+
+    Returns:
+        list: the parameters
+    """
+    separator = ","
+    quotes = ["'", '"']
+    escape = "\\"
+
+    inhibited = False
+    parameters = []
+    accumulator = ""
+
+    parameters_string = parameters_string.strip()
+
+    # Go through the string and extract the parameters
+    for index, char in enumerate(parameters_string):
+        accumulator += char
+
+        # Check if the character is in quotes and if it is not escaped.
+        if char in quotes and parameters_string[index - 1] != escape:
+            inhibited = not inhibited
+
+        if char == separator:
+            # If the character is a separator and it is not in quotes
+            if not inhibited:
+                # Add the parameter to the list
+                parameters.append(accumulator[:-1].strip())
+
+                # Reset the accumulator
+                accumulator = ""
+
+    return parameters + [accumulator.strip()]
+
+
+def extract_command(command: str):
+    """Extract the command name and parameters from the command string.
+
+    Args:
+        command (str): the command to interpret
+
+    Returns:
+        tuple: the command name and the parameters
+    """
+    # Extract the command name
+    re_command = r"^([a-zA-Z_][a-zA-Z0-9_]+)\("
+
+    command_name = re.findall(re_command, command)[0]
+
+    # Extract the parameters
+    re_parameters = r"\((.*)\)$"
+    parameters = re.findall(re_parameters, command)[0].strip()
+
+    parameters = extract_parameters(parameters)
+
+    # Convert the parameters to the correct type without using eval
+    for index, parameter in enumerate(parameters):
+        try:
+            parameters[index] = int(parameter)
+        except ValueError:
+            try:
+                parameters[index] = float(parameter)
+            except ValueError:
+                if parameter.startswith(('b"', "b'")):
+                    parameters[index] = parameter[2:-1].encode()
+
+                elif parameter.startswith(("0x", "0X")):
+                    parameters[index] = int(parameter, 16)
+
+                elif parameter.startswith(("0b", "0B")):
+                    parameters[index] = int(parameter, 2)
+
+                elif parameter == "True":
+                    parameters[index] = True
+
+                elif parameter == "False":
+                    parameters[index] = False
+
+                elif parameter == "None":
+                    parameters[index] = None
+
+                elif parameter.startswith('"') and parameter.endswith('"'):
+                    parameters[index] = parameter[1:-1].replace("\\", "")
+
+                elif parameter.startswith("'") and parameter.endswith("'"):
+                    parameters[index] = parameter[1:-1].replace("\\", "")
+
+    return command_name, parameters
+
+
 def interpreter(command: str, run: bool = False):
     """Interpret the given command and run it if asked to.
 
@@ -260,107 +364,13 @@ def interpreter(command: str, run: bool = False):
 
     Args:
         command (str): the command to interpret
-        run (bool, optional): Whether to run or not the command. Defaults to False.
+        run (bool, optional): Whether to run or not the command.
+        Defaults to False.
 
     Returns:
         functor, parameters or return of the running function: the functor and
         the parameters or the return of the running function
     """
-
-    # Extract the parameters from the command
-    def extract_parameters(parameters_string: str) -> list:
-        """Extract the parameters from the parameters string.
-
-        Args:
-            parameters_string (str): the parameters string.
-
-        Returns:
-            list: the parameters
-        """
-        separator = ","
-        quotes = ["'", '"']
-        escape = "\\"
-
-        inhibited = False
-        parameters = []
-        accumulator = ""
-
-        parameters_string = parameters_string.strip()
-
-        # Go through the string and extract the parameters
-        for index, char in enumerate(parameters_string):
-            accumulator += char
-
-            # Check if the character is in quotes and if it is not escaped.
-            if char in quotes and parameters_string[index - 1] != escape:
-                inhibited = not inhibited
-
-            if char == separator:
-                # If the character is a separator and it is not in quotes
-                if not inhibited:
-                    # Add the parameter to the list
-                    parameters.append(accumulator[:-1].strip())
-
-                    # Reset the accumulator
-                    accumulator = ""
-
-        return parameters + [accumulator.strip()]
-
-    # Extract command name and parameters
-    def extract_command(command: str):
-        """Extract the command name and parameters from the command string.
-
-        Args:
-            command (str): the command to interpret
-
-        Returns:
-            tuple: the command name and the parameters
-        """
-        # Extract the command name
-        re_command = r"^([a-zA-Z_][a-zA-Z0-9_]+)\("
-
-        command_name = re.findall(re_command, command)[0]
-
-        # Extract the parameters
-        re_parameters = r"\((.*)\)$"
-        parameters = re.findall(re_parameters, command)[0].strip()
-
-        parameters = extract_parameters(parameters)
-
-        # Convert the parameters to the correct type without using eval
-        for index, parameter in enumerate(parameters):
-            try:
-                parameters[index] = int(parameter)
-            except ValueError:
-                try:
-                    parameters[index] = float(parameter)
-                except ValueError:
-                    if parameter.startswith(('b"', "b'")):
-                        parameters[index] = parameter[2:-1].encode()
-
-                    elif parameter.startswith(("0x", "0X")):
-                        parameters[index] = int(parameter, 16)
-
-                    elif parameter.startswith(("0b", "0B")):
-                        parameters[index] = int(parameter, 2)
-
-                    elif parameter == "True":
-                        parameters[index] = True
-
-                    elif parameter == "False":
-                        parameters[index] = False
-
-                    elif parameter == "None":
-                        parameters[index] = None
-
-                    elif parameter.startswith('"') and parameter.endswith('"'):
-                        parameters[index] = parameter[1:-1].replace("\\", "")
-
-                    elif parameter.startswith("'") and parameter.endswith("'"):
-                        parameters[index] = parameter[1:-1].replace("\\", "")
-
-        return command_name, parameters
-
     # Extract the command name and parameters
     command_name, parameters = extract_command(command)
 
