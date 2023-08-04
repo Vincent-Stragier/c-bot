@@ -79,24 +79,25 @@ class OobaboogaConnector:
         """
 
         request_params = {
+            "url": self.url,
             "json": request,
             "headers": {"ngrok-skip-browser-warning": "true"},
             "timeout": REQUEST_TIMEOUT,
         }
 
         if self.basic_auth:
-            request_params["auth"] = HTTPBasicAuth(
-                self.username, self.password
+            request_params.update(
+                auth=HTTPBasicAuth(self.username, self.password)
             )
 
-        return requests.post(self.url, **request_params)
+        return requests.post(**request_params)
 
     def generate(
         self,
         entity_input: str,
         origin: str = "user",
         destination: str | None = None,
-        ghosting_prompt: str = "",
+        ghost_prompt: str = "",
         history: list | None = None,
         max_new_tokens: int = 200,
     ) -> list:
@@ -106,7 +107,7 @@ class OobaboogaConnector:
             entity_input (str): The user or tool input.
             origin (str, optional): The destination (user or tool).
             Defaults to "user".
-            prompt (str, optional): The prompt. Defaults to "".
+            ghost_prompt (str, optional): The prompt. Defaults to "".
             history (list, optional): The history. Defaults to None.
             max_new_tokens (int, optional): The maximum number of tokens to
             generate. Defaults to 200.
@@ -141,23 +142,25 @@ class OobaboogaConnector:
             history = history.copy()
             history.append(entity_input_dict)
 
-        new_prompt = ghosting_prompt
+        new_prompt = ghost_prompt
+
+        print(f"History: {history}")
 
         match origin:
             case "user":
                 new_prompt += self.decorate_history(history[-3:])
-                new_prompt += '\n[/INST]<bot to="tool">'
+                new_prompt += '[/INST]<bot to="tool">'
 
             case "tool":
                 new_prompt += self.decorate_history(history[-5:])
-                new_prompt += '\n[/INST]<bot to="user">'
+                new_prompt += '[/INST]<bot to="user">'
 
             case _:
                 raise ValueError(f"Invalid origin: {origin}")
 
         request = self.params.copy()
-        request["prompt"] = new_prompt
-        request["max_new_tokens"] = max_new_tokens
+        request.update(prompt=new_prompt)
+        request.update(max_new_tokens=max_new_tokens)
 
         request_response = self.api_request(request)
 
@@ -182,8 +185,29 @@ class OobaboogaConnector:
         """
         self.params = params
 
+    def get_response(self, input_data: dict, chat_history: list) -> list:
+        """Get a response from OobaBooga.
+
+        Args:
+            input_data (dict): The input data.
+            chat_history (list): The chat history.
+
+        Returns:
+            list: The chat history and the response.
+        """
+
+        new_history = self.generate(
+            entity_input=input_data.get("text_input", ""),
+            origin=input_data.get("origin", "user"),
+            destination="bot",
+            ghost_prompt=input_data.get("ghost_prompt", ""),
+            history=chat_history,
+        )
+
+        return chat_history + new_history
+
     # def get_response(
-    #     self, user_input: str, chat_history: dict | None = None):
+    #     self, user_input: str, chat_history: list | None = None):
     #     """Send a request to OobaBooga.
 
     #     Args:
@@ -302,7 +326,7 @@ class OobaboogaConnector:
 # # user_input = "Could you help me locate a chair nearby?"
 # # user_input = f'{prompt}<user>{user_input}</user>[/INST]\n<bot to="tool">'
 # bot_to_tool = generate(
-#     user_input, ghosting_prompt=prompt,
+#     user_input, ghost_prompt=prompt,
 #     history=chat_history, max_new_tokens=512
 # )
 
@@ -312,7 +336,7 @@ class OobaboogaConnector:
 
 # bot_to_user = generate(
 #     tool_input,
-#     ghosting_prompt=prompt,
+#     ghost_prompt=prompt,
 #     origin="tool",
 #     history=chat_history,
 #     max_new_tokens=512,

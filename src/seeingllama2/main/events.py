@@ -19,7 +19,7 @@ def handle_message(message):
 
     # Send the message to the dialog manager
     dialog_manager = DialogManager(
-        request_id=request.sid,
+        request_id=request.values.get("request_id", ""),
         connector=current_app.config["config"]["llm_api"]["name"],
         base_url=(
             f'{current_app.config["config"]["llm_api"]["url"]}:'
@@ -28,31 +28,56 @@ def handle_message(message):
         api_path=current_app.config["config"]["llm_api"]["path"],
     )
 
-    response = dialog_manager.get_response(f"<user>{message}</user>")
+    bot_to_tool = dialog_manager.get_response(
+        {
+            "text_input": message,
+            "origin": "user",
+            "ghost_prompt": current_app.config["prompt"],
+        }
+    )
 
-    print(f"Response: {response}")
+    # Send message to interpreter
+
+    tool_to_bot = "True"
+
+    # Send the message from tool to llm
+    bot_to_user = dialog_manager.get_response(
+        {
+            "text_input": tool_to_bot,
+            "origin": "tool",
+            "ghost_prompt": current_app.config["prompt"],
+        }
+    )
+
+    message = (
+        f"Bot to tool: {bot_to_tool[-1].get('text', '')}"
+        f"</br>Tool to bot: {tool_to_bot}"
+        f"</br>Bot to user: {bot_to_user[-1].get('text', '')}"
+    )
+
+    print(message, bot_to_user)
 
     emit(
         "message",
         {
-            "content": response,
+            "content": message,
             "end": True,
             "start": True,
             "bot_name": js_app_config.get("bot_name", "C-Bot"),
         },
-        room=request.sid,
+        room=request.values.get("request_id", ""),
     )
 
     # Play the response on a specific websocket session
     emit(
         "speech",
         {
-            "text": response,
+            "text": message,
             "voice": voice_config.get("id", 0),
             "rate": voice_config.get("rate", 200),
             "volume": voice_config.get("volume", 1),
         },
-        room=request.sid,
+        room=request.values.get("request_id", ""),
     )
 
     # socketio.emit(

@@ -30,7 +30,7 @@ class DialogManager:
         request_id: str,
         connector: str = "oobabooga",
         base_url: str = "http://localhost:5000",
-        api_path: str = "/api/v1",
+        api_path: str = "/api/v1/generate",
     ):
         """Initialize DialogManager."""
         MANAGER_DATA_LOCK.acquire()
@@ -40,73 +40,48 @@ class DialogManager:
                 "connector": connector,
                 "base_url": base_url,
                 "api_path": api_path,
-                "chat_history": {"internal": [], "visible": []},
+                "chat_history": [],
             }
 
         self.request_id = request_id
         self.connector = connector
         self.base_url = base_url
         self.api_path = api_path
-        self.chat_history = manager_data[request_id]["chat_history"]
+        self.chat_history = manager_data[request_id].get("chat_history", [])
         MANAGER_DATA_LOCK.release()
 
-    def get_chat_history(self):
+    def get_chat_history(self) -> list:
         """Get chat history."""
         MANAGER_DATA_LOCK.acquire()
-        self.chat_history = manager_data[self.request_id]["chat_history"]
+        self.chat_history = manager_data[self.request_id].get(
+            "chat_history", []
+        )
         MANAGER_DATA_LOCK.release()
         return self.chat_history
 
-    def set_chat_history(self, chat_history: dict):
+    def set_chat_history(self, chat_history: list):
         """Set chat history."""
         self.chat_history = chat_history
         MANAGER_DATA_LOCK.acquire()
         manager_data[self.request_id]["chat_history"] = chat_history
         MANAGER_DATA_LOCK.release()
 
-    def get_response(self, user_input: str):
+    def get_response(self, user_input: dict):
         """Get response from connector."""
-        # Receive user input
-        # Send user input to LLM
 
-        print(f"User input in DM: {user_input}")
+        print(f"Text in DialogManager: {user_input['text_input']}")
+
         llm = connectors.GenericConnector(
             self.base_url, self.api_path, connector=self.connector
         )
         response = llm.get_response(user_input, self.chat_history)
 
-        print(f"Response from LLM: {response}")
-
         if response == 404:
             return "Error: LLM not responding."
 
         # Update chat history
-        visible_chat_history = self.chat_history.get("visible", [])
-        visible_chat_history = (
-            visible_chat_history + ["user", user_input] + ["llm", response]
-        )
-        self.chat_history["visible"] = visible_chat_history
-
-        print("Chat history:")
-        print(self.chat_history)
-
-        # Parse response from LLM:
-        # <bot to='tool'>function(param1, param2)</bot>
-        # tool_call = str(response)
-        # tool_call = tool_call[tool_call.rfind("<bot to=") + 10 :]
-
-        # tool_response = interpreter(tool_call, run=True)
-
-        # print(f"Tool response: {tool_response}")
-
-        # Run corresponding tool
+        new_chat_history = self.chat_history
+        new_chat_history.extend(response)
+        self.chat_history = new_chat_history
 
         return response
-
-        # Receive response from LLM
-        # Interpret response from LLM and activate appropriate modules
-        # Send the modules' responses to the LLM
-        # Receive response from LLM
-        # Send response to user
-
-    # def state_machine()

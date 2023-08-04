@@ -14,10 +14,10 @@ class GenericConnector:
         """Initialize GenericConnector."""
         self.connector = ALL_CONNECTORS[connector](base_url, api_path)
 
-    def get_response(self, user_input, chat_history=None):
+    def get_response(self, input_data, chat_history):
         """Get response from connector."""
-        print(f"User input in Generic Connector: {user_input}")
-        return self.connector.get_response(user_input, chat_history)
+        # print(f"User input in Generic Connector: {input_data}")
+        return self.connector.get_response(input_data, chat_history)
 
     def set_params(self, params):
         """Set parameters for connector."""
