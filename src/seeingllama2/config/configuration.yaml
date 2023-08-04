@@ -28,6 +28,6 @@ voice:
 
 llm_api:
   name: oobabooga
-  url: "http:127.0.0.1"
+  url: "http://127.0.0.1"
   port: 5000
-  path: "/api/v1/chat"
+  path: "/api/v1/generate"
