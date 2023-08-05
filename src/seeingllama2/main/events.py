@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
+from traceback import format_exc
+
 from flask import current_app, request
 from flask_socketio import emit
 from seeingllama2 import socketio
@@ -38,7 +40,13 @@ def handle_message(message):
     )
 
     # Send message to interpreter
-    tool_to_bot = interpreter(bot_to_tool[-1].get("text", ""), run=True)
+    try:
+        tool_command = str(interpreter(bot_to_tool[-1].get("text", "")))
+        print(f"Command: {tool_command}")
+        tool_to_bot = interpreter(tool_command)
+
+    except (IndexError,):
+        tool_to_bot = f"I ran into an error. {format_exc()}"
 
     # Send the message from tool to llm
     bot_to_user = dialog_manager.get_response(
