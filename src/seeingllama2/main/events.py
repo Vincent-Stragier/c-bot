@@ -41,9 +41,9 @@ def handle_message(message):
 
     # Send message to interpreter
     try:
-        tool_command = str(interpreter(bot_to_tool[-1].get("text", "")))
+        tool_command = str(bot_to_tool[-1].get("text", ""))
         print(f"Command: {tool_command}")
-        tool_to_bot = interpreter(tool_command)
+        tool_to_bot = interpreter(tool_command, run=True)
 
     except (IndexError,):
         tool_to_bot = f"I ran into an error. {format_exc()}"

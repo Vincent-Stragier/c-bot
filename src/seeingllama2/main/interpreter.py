@@ -304,8 +304,7 @@ def extract_command(command: str):
         tuple: the command name and the parameters
     """
     # Extract the command name
-    re_command = r"^([a-zA-Z_][a-zA-Z0-9_]+)\("
-
+    re_command = r"^([a-zA-Z_.][a-zA-Z0-9_.]+)\("
     command_name = re.findall(re_command, command)[0]
 
     # Extract the parameters
