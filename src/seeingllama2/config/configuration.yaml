@@ -1,3 +1,4 @@
+---
 flask:
   debug: true
   port: 80

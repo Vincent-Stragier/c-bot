@@ -53,8 +53,8 @@ class DialogManager:
     def get_chat_history(self) -> list:
         """Get chat history."""
         MANAGER_DATA_LOCK.acquire()
-        self.chat_history = manager_data[self.request_id].get(
-            "chat_history", []
+        self.chat_history = list(
+            manager_data[self.request_id].get("chat_history", [])
         )
         MANAGER_DATA_LOCK.release()
         return self.chat_history
