@@ -66,7 +66,7 @@ class DialogManager:
         manager_data[self.request_id]["chat_history"] = chat_history
         MANAGER_DATA_LOCK.release()
 
-    def get_response(self, user_input: dict):
+    def get_response(self, user_input: dict) -> list[dict]:
         """Get response from connector."""
 
         print(f"Text in DialogManager: {user_input['text_input']}")
@@ -77,7 +77,12 @@ class DialogManager:
         response = llm.get_response(user_input, self.chat_history)
 
         if response == 404:
-            return "Error: LLM not responding."
+            return [
+                {
+                    "error": "LLM not responding.",
+                    "text": "Error: 404, LLM not responding.",
+                },
+            ]
 
         # Update chat history
         new_chat_history = self.chat_history

@@ -153,8 +153,8 @@ def look_for(name: str) -> str:
     Returns:
         str: The status of the search.
     """
-    logger.info("mocked look_for")
-    return f"{name} found."
+    logger.info("mocked look_for(%s)", name)
+    return "True"
 
 
 def enumerate_individuals() -> list:

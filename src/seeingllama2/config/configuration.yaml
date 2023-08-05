@@ -1,8 +1,9 @@
----
 flask:
   debug: true
   port: 80
   host: "0.0.0.0"
+  # ssl_keyfile: "/etc/letsencrypt/live/example.com/fullchain.pem"
+  # ssl_certfile: "/etc/letsencrypt/live/example.com/privkey.pem"
 
 html_index:
   title: C-Bot
@@ -31,3 +32,6 @@ llm_api:
   url: "http://127.0.0.1"
   port: 5000
   path: "/api/v1/generate"
+  # http_basic_auth:
+  #   username: api_token
+  #   password: a_random_password

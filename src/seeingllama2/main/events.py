@@ -5,6 +5,7 @@ from flask import current_app, request
 from flask_socketio import emit
 from seeingllama2 import socketio
 from seeingllama2.main.dialog_manager import DialogManager
+from seeingllama2.main.interpreter import interpreter
 
 
 @socketio.on("message")
@@ -37,8 +38,7 @@ def handle_message(message):
     )
 
     # Send message to interpreter
-
-    tool_to_bot = "True"
+    tool_to_bot = interpreter(bot_to_tool[-1].get("text", ""), run=True)
 
     # Send the message from tool to llm
     bot_to_user = dialog_manager.get_response(
