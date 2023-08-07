@@ -85,7 +85,7 @@ class DialogManager:
             ]
 
         # Update chat history
-        new_chat_history = self.chat_history
+        new_chat_history = list(self.chat_history)
         new_chat_history.extend(response)
         self.chat_history = new_chat_history
 
