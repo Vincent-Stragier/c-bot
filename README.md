@@ -71,7 +71,7 @@ But, I'm still battling with the API on the client side, trying to generate a wo
 Note that you might need to install espeak on your computer. You can install this application using pip (and git) via the following command:
 
 ```bash
-python -m pip install --force-reinstall git+https://github.com/Vincent-Stragier/c-bot.git
+python3 -m pip install --force-reinstall git+https://github.com/Vincent-Stragier/c-bot.git
 ```
 
 #### Configuration
