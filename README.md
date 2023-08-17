@@ -64,7 +64,7 @@ And I can kill the session using:
 screen -X -S api kill
 ```
 
-But, I'm still battling with the API on the client side, trying to generate a working prompt…
+But, I'm still battling with the API on the client-side, trying to generate a working prompt…
 
 ### Installation of this application
 
