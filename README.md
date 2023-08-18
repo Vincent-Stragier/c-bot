@@ -79,7 +79,7 @@ python3 -m pip install --force-reinstall git+https://github.com/Vincent-Stragier
 To simplify the configuration, multiple settings can be changed using a YAML file. Then you can start the application using the following command:
 
 ```bash
-python3 -m seeingllama2 -c /path/to/config.yaml
+seeingllama2 -c /path/to/config.yaml
 ```
 
 ##### config.yaml

@@ -5,7 +5,8 @@ import argparse
 import yaml
 from seeingllama2 import app, setlocale, socketio
 
-if __name__ == "__main__":
+
+def main():
     parser = argparse.ArgumentParser("Seeing Llama 2")
     parser.add_argument(
         "--config", "-c", type=str, help="Path to the config file"
@@ -70,7 +71,20 @@ if __name__ == "__main__":
         socketio_config.pop("certfile")
         socketio_config.pop("server_side")
 
-    socketio.run(app, **socketio_config)
+    # socketio.run(app, **socketio_config)
+
+    def run_server():
+        """Run the server."""
+        socketio.run(app, **socketio_config)
+
+    socketio.start_background_task(run_server)
+
+
+if __name__ == "__main__":
+    main()
+
+elif __name__ == "seeingllama2.__main__":
+    print("Starting 'seeingllama2'...")
 
 else:
     raise RuntimeError("Only for use with the -m switch, not as a Python API")
