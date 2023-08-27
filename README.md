@@ -1,6 +1,6 @@
 # Interactive agent for visually impaired and blind individuals (based on Llama2)
 
-This project uses a tier application to run the Large Language Model and accesses it using an API.
+This project uses a tier application to run the Large Language Model and accesses it using an API. **This is a prototype!**
 The current tier application is based on Oobabooga's text generation webui. In the future support for Petals, or OpenAI API will be added.
 
 ## Installation
@@ -69,6 +69,12 @@ But, I'm still battling with the API on the client-side, trying to generate a wo
 ### Installation of this application
 
 Note that you might need to install espeak on your computer. You can install this application using pip (and git) via the following command:
+
+```bash
+python3 -m pip install --force-reinstall seeingllama2
+```
+
+Or you can install it from the git repository:
 
 ```bash
 python3 -m pip install --force-reinstall git+https://github.com/Vincent-Stragier/c-bot.git
